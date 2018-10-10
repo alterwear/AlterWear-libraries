@@ -68,7 +68,7 @@
 // no futher changed below this point
 
 // current version number
-#define DEMO_VERSION "5"
+#define DEMO_VERSION "alter"
 
 
 // pre-processor convert to string

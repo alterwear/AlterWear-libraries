@@ -621,6 +621,7 @@ void EPD_Class::border_dummy_line() {
 // output one line of scan and data bytes to the display
 void EPD_Class::line(uint16_t line, const uint8_t *data, uint8_t fixed_value, bool read_progmem, EPD_stage stage) {
 
+	//Serial.print("alter-version, line... ");
 	SPI_on();
 
 	// send data
