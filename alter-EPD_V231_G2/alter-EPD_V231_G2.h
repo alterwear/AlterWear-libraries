@@ -164,8 +164,8 @@ public:
 	void image_fast(PROGMEM const uint8_t *image) {
 		Serial.print("alter-epd-v231-g2, image_fast");
 		this->frame_fixed_repeat(0xaa, EPD_compensate);
-		this->frame_fixed_repeat(0xaa, EPD_white);
-		this->frame_data_repeat(image, EPD_inverse);
+		//this->frame_fixed_repeat(0xaa, EPD_white);
+		//this->frame_data_repeat(image, EPD_inverse);
 		this->frame_data_repeat(image, EPD_normal);
 	}
 
