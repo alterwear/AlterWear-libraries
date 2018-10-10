@@ -145,6 +145,7 @@ public:
 
 	// assuming a clear (white) screen output an image (PROGMEM data)
 	void image_0(PROGMEM const uint8_t *image) {
+		Serial.print("alter-epd-v231-g2, image_0");
 		this->frame_fixed_repeat(0xaa, EPD_compensate);
 		this->frame_fixed_repeat(0xaa, EPD_white);
 		this->frame_data_repeat(image, EPD_inverse);
@@ -153,10 +154,19 @@ public:
 
 	// change from old image to new image (PROGMEM data)
 	void image(PROGMEM const uint8_t *old_image, PROGMEM const uint8_t *new_image) {
+		Serial.print("alter-epd-v231-g2, image");
 		this->frame_data_repeat(old_image, EPD_compensate);
 		this->frame_data_repeat(old_image, EPD_white);
 		this->frame_data_repeat(new_image, EPD_inverse);
 		this->frame_data_repeat(new_image, EPD_normal);
+	}
+
+	void image_fast(PROGMEM const uint8_t *image) {
+		Serial.print("alter-epd-v231-g2, image_fast");
+		this->frame_fixed_repeat(0xaa, EPD_compensate);
+		this->frame_fixed_repeat(0xaa, EPD_white);
+		this->frame_data_repeat(image, EPD_inverse);
+		this->frame_data_repeat(image, EPD_normal);
 	}
 
 #if defined(EPD_ENABLE_EXTRA_SRAM)
