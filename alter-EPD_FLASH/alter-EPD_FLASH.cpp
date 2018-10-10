@@ -24,7 +24,7 @@
 
 #include <SPI.h>
 
-#include "EPD_FLASH.h"
+#include "alter-EPD_FLASH.h"
 
 // delays - more consistent naming
 #define Delay_ms(ms) delay(ms)

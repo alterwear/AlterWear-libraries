@@ -25,7 +25,7 @@
 #include <Arduino.h>
 #endif
 
-#include "S5813A.h"
+#include "alter-S5813A.h"
 
 
 //#if defined(__MSP430_CPU__)

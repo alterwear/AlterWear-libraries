@@ -49,12 +49,12 @@
 
 // required libraries
 #include <SPI.h>
-#include <EPD_FLASH.h>
-#include <EPD_V231_G2.h>
+#include <alter-EPD_FLASH.h>
+#include <alter-EPD_V231_G2.h>
 #define SCREEN_SIZE 200
-#include <EPD_PANELS.h>
-#include <S5813A.h>
-#include <EPD_PINOUT.h>
+#include <alter-EPD_PANELS.h>
+#include <alter-S5813A.h>
+#include <alter-EPD_PINOUT.h>
 
 // select two images from:  text_image text-hello cat aphrodite venus saturn
 #define IMAGE_1  text_image

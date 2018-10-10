@@ -15,12 +15,12 @@
 #if !defined(EPD_PINOUT_H)
 #define EPD_PINOUT_H 1
 
-#include <EPD_PANELS.h>
+#include <alter-EPD_PANELS.h>
 
 #if defined(ENERGIA)
-#include <EPD_PINOUT_Energia.h>
+#include <alter-EPD_PINOUT_Energia.h>
 #else
-#include <EPD_PINOUT_Arduino.h>
+#include <alter-EPD_PINOUT_Arduino.h>
 #endif
 
 #endif

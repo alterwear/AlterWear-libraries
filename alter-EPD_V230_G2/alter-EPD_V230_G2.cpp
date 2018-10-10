@@ -18,7 +18,7 @@
 
 #include <SPI.h>
 
-#include "EPD_V230_G2.h"
+#include "alter-EPD_V230_G2.h"
 
 // delays - more consistent naming
 #define Delay_ms(ms) delay(ms)
