@@ -383,6 +383,7 @@ int EPD_Class::temperature_to_factor_10x(int temperature) const {
 // so smallest would have 96 * 32 bytes
 
 void EPD_Class::frame_fixed(uint8_t fixed_value, EPD_stage stage) {
+	// Can I skip "even" or "odd" lines here, to save time?
 	for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
 		this->line(line, 0, fixed_value, false, stage);
 	}
@@ -414,10 +415,13 @@ void EPD_Class::frame_cb(uint32_t address, EPD_reader *reader, EPD_stage stage) 
 }
 
 
+// gets called from image() functions in .h file, more or less directly from Arduino
 void EPD_Class::frame_fixed_repeat(uint8_t fixed_value, EPD_stage stage) {
+	// 480 milliseconds for all board sizes except 2.6 and 2.7
 	long stage_time = this->factored_stage_time;
 	do {
 		unsigned long t_start = millis();
+		// this next code is the one that actually goes through line by line.
 		this->frame_fixed(fixed_value, stage);
 		unsigned long t_end = millis();
 		if (t_end > t_start) {
@@ -425,7 +429,7 @@ void EPD_Class::frame_fixed_repeat(uint8_t fixed_value, EPD_stage stage) {
 		} else {
 			stage_time -= t_start - t_end + 1 + ULONG_MAX;
 		}
-	} while (stage_time > 0);
+	} while (stage_time > 0); // calls frame_fixed again if there's more time?
 }
 
 
