@@ -108,8 +108,6 @@ PROGMEM const
 #undef unsigned
 
 
-
-
 // LED anode through resistor to I/O pin
 // LED cathode to Ground
 #define LED_ON  HIGH
@@ -239,9 +237,9 @@ void loop() {
 
 	case 1:         // clear -> text
 #if EPD_IMAGE_ONE_ARG
-		EPD.image_fast(IMAGE_1_BITS);
+    EPD.image(IMAGE_1_BITS);
 #elif EPD_IMAGE_TWO_ARG
-		EPD.image_fast(IMAGE_1_BITS);
+    EPD.image_0(IMAGE_1_BITS);
 #else
 #error "unsupported image function"
 #endif
@@ -261,9 +259,9 @@ void loop() {
 
 	case 3:        // picture -> text
 #if EPD_IMAGE_ONE_ARG
-		EPD.image_fast(IMAGE_1_BITS);
+		EPD.image_flip(IMAGE_1_BITS);
 #elif EPD_IMAGE_TWO_ARG
-		EPD.image_fast(IMAGE_1_BITS);
+		EPD.image_flip(IMAGE_1_BITS);
 #else
 #error "unsupported image function"
 #endif

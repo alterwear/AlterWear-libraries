@@ -390,9 +390,9 @@ void EPD_Class::frame_fixed(uint8_t fixed_value, EPD_stage stage) {
 }
 
 
-void EPD_Class::frame_data(PROGMEM const uint8_t *image, EPD_stage stage){
+void EPD_Class::frame_data(PROGMEM const uint8_t *image, EPD_stage stage, bool flip=false){
 	for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
-		this->line(line, &image[line * this->bytes_per_line], 0, true, stage);
+		this->line(line, &image[line * this->bytes_per_line], 0, true, stage, flip);
 	}
 }
 
@@ -433,11 +433,11 @@ void EPD_Class::frame_fixed_repeat(uint8_t fixed_value, EPD_stage stage) {
 }
 
 
-void EPD_Class::frame_data_repeat(PROGMEM const uint8_t *image, EPD_stage stage) {
+void EPD_Class::frame_data_repeat(PROGMEM const uint8_t *image, EPD_stage stage, bool flip=false) {
 	long stage_time = this->factored_stage_time;
 	do {
 		unsigned long t_start = millis();
-		this->frame_data(image, stage);
+		this->frame_data(image, stage, flip);
 		unsigned long t_end = millis();
 		if (t_end > t_start) {
 			stage_time -= t_end - t_start;

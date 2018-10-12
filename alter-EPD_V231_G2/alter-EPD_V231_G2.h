@@ -169,6 +169,14 @@ public:
 		this->frame_data_repeat(image, EPD_normal);
 	}
 
+	void image_flip(PROGMEM const uint8_t *image) {
+		Serial.print("alter-epd-v231-g2, image_flip");
+		// image_fast but calling a different function deeper in
+		// second arg is "EPD_STAGE"
+		this->frame_fixed_repeat(0xaa, EPD_compensate); // all black doesn't need to be fliped
+		this->frame_data_repeat(image, EPD_normal, true); // image does
+	}
+
 #if defined(EPD_ENABLE_EXTRA_SRAM)
 
 	// change from old image to new image (SRAM version)
@@ -185,7 +193,7 @@ public:
 
 	// single frame refresh
 	void frame_fixed(uint8_t fixed_value, EPD_stage stage);
-	void frame_data(PROGMEM const uint8_t *new_image, EPD_stage stage);
+	void frame_data(PROGMEM const uint8_t *new_image, EPD_stage stage, bool flip=false);
 #if defined(EPD_ENABLE_EXTRA_SRAM)
 	void frame_sram(const uint8_t *new_image, EPD_stage stage);
 #endif
@@ -193,7 +201,7 @@ public:
 
 	// stage_time frame refresh
 	void frame_fixed_repeat(uint8_t fixed_value, EPD_stage stage);
-	void frame_data_repeat(PROGMEM const uint8_t *new_image, EPD_stage stage);
+	void frame_data_repeat(PROGMEM const uint8_t *new_image, EPD_stage stage, bool flip=false);
 #if defined(EPD_ENABLE_EXTRA_SRAM)
 	void frame_sram_repeat(const uint8_t *new_image, EPD_stage stage);
 #endif
