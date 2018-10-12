@@ -623,7 +623,7 @@ void EPD_Class::border_dummy_line() {
 
 
 // output one line of scan and data bytes to the display
-void EPD_Class::line(uint16_t line, const uint8_t *data, uint8_t fixed_value, bool read_progmem, EPD_stage stage) {
+void EPD_Class::line(uint16_t line, const uint8_t *data, uint8_t fixed_value, bool read_progmem, EPD_stage stage, bool flip=false) {
 
 	//Serial.print("alter-version, line... ");
 	SPI_on();
@@ -641,9 +641,17 @@ void EPD_Class::line(uint16_t line, const uint8_t *data, uint8_t fixed_value, bo
 		SPI_put(0x00);
 	}
 
+	// true for 2.0 and 1.44, false for 1.9
 	if (this->middle_scan) {
-		// data bytes
-		this->odd_pixels(data, fixed_value, read_progmem, stage);
+		// w/ even_pixels called on top, and odd_pixels called below the loop,
+		// the images are flipped
+		//if odd_pixels is called first, the image is normal
+		if (flip) {
+			this->even_pixels(data, fixed_value, read_progmem, stage);
+		} else {
+			this->odd_pixels(data, fixed_value, read_progmem, stage);
+		}
+		
 
 		// scan line
 		for (uint16_t b = this->bytes_per_scan; b > 0; --b) {
@@ -654,8 +662,15 @@ void EPD_Class::line(uint16_t line, const uint8_t *data, uint8_t fixed_value, bo
 			SPI_put(n);
 		}
 
-		// data bytes
-		this->even_pixels(data, fixed_value, read_progmem, stage);
+		// if the only call to even or odd pixels happens below the above loop
+		// nothing happens.
+		// if the call to one happens above, and the call to the other happens below,
+		// everything is fine.
+		if (flip) {
+			this->odd_pixels(data, fixed_value, read_progmem, stage);
+		} else {
+			this->even_pixels(data, fixed_value, read_progmem, stage);
+		}
 
 	} else {
 		// even scan line, but as lines on display are numbered from 1, line: 1,3,5,...
