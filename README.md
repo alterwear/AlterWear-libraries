@@ -13,3 +13,4 @@ Custom EPD libraries for controlling the eink displays from Pervasive Displays.
 ### Notes
 - Could reduce "stage time" (now: 1.44" and 2" takes 480ms, 2.7" takes 630ms). Will increase ghosting but could speed things up.
 - Can skip inverse color steps (image_fast does this), will degrade the display over time.
+- **MAJOR PROBLEM**: EPD lib reads data off Arduino progmem. Gets read via pgm_read_byte_near. This might be hard to change..... 
