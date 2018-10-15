@@ -395,6 +395,7 @@ void EPD_Class::frame_data(PROGMEM const uint8_t *image, EPD_stage stage, bool f
 	}
 }
 
+
 /*
 void EPD_Class::frame_data(PROGMEM const uint8_t *image, EPD_stage stage, bool flip=false, arr[] turn_on){
 	for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
