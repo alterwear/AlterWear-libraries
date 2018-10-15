@@ -237,9 +237,9 @@ void loop() {
 
 	case 1:         // clear -> text
 #if EPD_IMAGE_ONE_ARG
-    EPD.image(IMAGE_1_BITS);
+    EPD.image_lines(IMAGE_1_BITS);
 #elif EPD_IMAGE_TWO_ARG
-    EPD.image_0(IMAGE_1_BITS);
+    EPD.image_flip(IMAGE_1_BITS);
 #else
 #error "unsupported image function"
 #endif

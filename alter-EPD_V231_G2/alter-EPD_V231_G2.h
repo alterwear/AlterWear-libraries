@@ -173,7 +173,15 @@ public:
 		Serial.print("alter-epd-v231-g2, image_flip");
 		// image_fast but calling a different function deeper in
 		// second arg is "EPD_STAGE"
-		this->frame_fixed_repeat(0xaa, EPD_compensate); // all black doesn't need to be fliped
+		this->frame_fixed_repeat(0xaa, EPD_compensate); // all black doesn't need to be flipped
+		this->frame_data_repeat(image, EPD_normal, true); // image does
+	}
+
+	void image_lines(PROGMEM const uint8_t *image) {
+		Serial.print("alter-epd-v231-g2, image_lines");
+		// image_fast but calling a different function deeper in
+		// second arg is "EPD_STAGE"
+		this->frame_fixed_repeat(0xaa, EPD_compensate); // all black doesn't need to be flipped
 		this->frame_data_repeat(image, EPD_normal, true); // image does
 	}
 

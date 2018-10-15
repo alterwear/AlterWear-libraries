@@ -389,12 +389,23 @@ void EPD_Class::frame_fixed(uint8_t fixed_value, EPD_stage stage) {
 	}
 }
 
-
 void EPD_Class::frame_data(PROGMEM const uint8_t *image, EPD_stage stage, bool flip=false){
 	for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
-		this->line(line, &image[line * this->bytes_per_line], 0, true, stage, flip);
+			this->line(line, &image[line * this->bytes_per_line], 0, true, stage, flip);
 	}
 }
+
+/*
+void EPD_Class::frame_data(PROGMEM const uint8_t *image, EPD_stage stage, bool flip=false, arr[] turn_on){
+	for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
+		if (turn_on== 1){
+			this->line(line, &image[line * this->bytes_per_line], 0, true, stage, flip);
+		} else {
+			//blank
+		}
+	}
+}
+*/
 
 
 #if defined(EPD_ENABLE_EXTRA_SRAM)
