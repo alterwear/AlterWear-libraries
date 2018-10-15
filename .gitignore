@@ -1,4 +1,5 @@
 .DS_Store
+*.code-workspace
 Adafruit-Motor-Shield-library-99381df/
 Adafruit-PN532-master/
 Adafruit-PWM-Servo-Driver-Library/
