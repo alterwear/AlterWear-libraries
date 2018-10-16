@@ -389,9 +389,39 @@ void EPD_Class::frame_fixed(uint8_t fixed_value, EPD_stage stage) {
 	}
 }
 
-void EPD_Class::frame_data(PROGMEM const uint8_t *image, EPD_stage stage, bool flip=false){
+// void EPD_Class::frame_data(PROGMEM const uint8_t *image, EPD_stage stage, bool flip=false){
+// 	for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
+// 			this->line(line, &image[line * this->bytes_per_line], 0, true, stage, flip);
+// 	}
+// }
+
+void EPD_Class::frame_data(PROGMEM const uint8_t *image, EPD_stage stage, bool flip=false, int *turn_on=nullptr, int turn_on_size=0){
 	for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
-			this->line(line, &image[line * this->bytes_per_line], 0, true, stage, flip);
+		if (turn_on != NULL){
+
+			// my original approach to the image_lines function was to create the array of line indices
+			// within the image_lines function in the .h file, but the image wasn't showing up. I think 
+			// the error was somehow because of how I was passing in the pointer to the functions, and 
+			// when line() was called, the pointer was null and thus no image could show up. 
+
+			// so instead I instantiated the array within this function
+			int size = 50;
+			int bloop[size];
+			for (int i = 0; i < size; i++)
+				bloop[i] = i;
+
+			for (int index = 0; index < size; index++) {
+				this->line(bloop[index], &image[index * this->bytes_per_line], 0, true, stage, flip);
+			}
+
+			// for (int index = 0; index < turn_on_size; index++) {
+			// 	this->line(&turn_on[index], &image[index * this->bytes_per_line], 0, true, stage, flip);
+			// }
+		} else {
+			for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
+				this->line(line, &image[line * this->bytes_per_line], 0, true, stage, flip);
+			}
+		}
 	}
 }
 
@@ -445,11 +475,11 @@ void EPD_Class::frame_fixed_repeat(uint8_t fixed_value, EPD_stage stage) {
 }
 
 
-void EPD_Class::frame_data_repeat(PROGMEM const uint8_t *image, EPD_stage stage, bool flip=false) {
+void EPD_Class::frame_data_repeat(PROGMEM const uint8_t *image, EPD_stage stage, bool flip=false, int *turn_on=nullptr, int turn_on_size=0) {
 	long stage_time = this->factored_stage_time;
 	do {
 		unsigned long t_start = millis();
-		this->frame_data(image, stage, flip);
+		this->frame_data(image, stage, flip, turn_on, turn_on_size);
 		unsigned long t_end = millis();
 		if (t_end > t_start) {
 			stage_time -= t_end - t_start;
