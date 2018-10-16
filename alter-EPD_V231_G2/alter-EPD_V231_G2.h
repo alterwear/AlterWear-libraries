@@ -183,8 +183,10 @@ public:
 		//creating array of index of lines
 		int turn_on_size = 10;
 		int turn_on[turn_on_size];
-		for (int i = 0; i < turn_on_size; i++)
-        	turn_on[i] = i+10;
+		for (int i = 0; i < turn_on_size; i++) {
+			int random_integer = rand();
+        	turn_on[i] = random_integer%this->lines_per_display;
+	    }
 
 		// this->frame_fixed_repeat(0xff, EPD_compensate); // all black
 		this->frame_data_repeat(image, EPD_normal, false, turn_on, turn_on_size);

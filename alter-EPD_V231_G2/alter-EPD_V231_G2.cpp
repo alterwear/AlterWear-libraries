@@ -400,8 +400,10 @@ void EPD_Class::frame_data(PROGMEM const uint8_t *image, EPD_stage stage, bool f
 		if (turn_on != NULL){
 
 			for (int index = 0; index < size; index++) {
-				//this->line(bloop[index], &image[index * this->bytes_per_line], 0, true, stage, flip);
-				this->line(turn_on[index], &image[index * this->bytes_per_line], 0, true, stage, flip);
+				if (turn_on[index]) {
+					//this->line(bloop[index], &image[index * this->bytes_per_line], 0, true, stage, flip);
+					this->line(turn_on[index], &image[index * this->bytes_per_line], 0, true, stage, flip);
+				}
 			}
 
 			// for (int index = 0; index < turn_on_size; index++) {
