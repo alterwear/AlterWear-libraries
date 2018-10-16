@@ -179,17 +179,15 @@ public:
 
 	void image_lines(PROGMEM const uint8_t *image) {
 		Serial.print("alter-epd-v231-g2, image_lines");
-		// image_fast but calling a different function deeper in
-		// second arg is "EPD_STAGE"
 
 		//creating array of index of lines
-		int turn_on_size = 500;
+		int turn_on_size = 10;
 		int turn_on[turn_on_size];
 		for (int i = 0; i < turn_on_size; i++)
         	turn_on[i] = i+10;
 
 		// this->frame_fixed_repeat(0xff, EPD_compensate); // all black
-		this->frame_data_repeat(image, EPD_normal, false, turn_on, turn_on_size); // image does
+		this->frame_data_repeat(image, EPD_normal, false, turn_on, turn_on_size);
 	}
 
 #if defined(EPD_ENABLE_EXTRA_SRAM)

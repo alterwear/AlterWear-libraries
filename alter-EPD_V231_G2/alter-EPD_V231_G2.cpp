@@ -405,7 +405,7 @@ void EPD_Class::frame_data(PROGMEM const uint8_t *image, EPD_stage stage, bool f
 			// when line() was called, the pointer was null and thus no image could show up. 
 
 			// so instead I instantiated the array within this function
-			int size = 50;
+			int size = turn_on_size;
 			int bloop[size];
 			for (int i = 0; i < size; i++)
 				bloop[i] = i;
