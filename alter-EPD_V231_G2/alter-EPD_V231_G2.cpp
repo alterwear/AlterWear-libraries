@@ -390,13 +390,16 @@ void EPD_Class::frame_fixed(uint8_t fixed_value, EPD_stage stage) {
 }
 
 void EPD_Class::frame_data(PROGMEM const uint8_t *image, EPD_stage stage, bool flip=false, int *turn_on=nullptr, int size=0){
-	for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
-		if (size > 0){
-			if (turn_on[line] > 0) {
+	int index = 0;
+	if (size > 0) {
+		for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
+			if ( (index < size) && (turn_on[index] > 0) && (turn_on[index] == line)) {
 				this->line(line, &image[line * this->bytes_per_line], 0, true, stage);
+				index++;
 			} else {
 				// don't turn on the line...
 			}
+		}
 			/*
 			for (int index = 0; index < size; index++) {
 				if (turn_on[index] > 0) {
@@ -416,10 +419,9 @@ void EPD_Class::frame_data(PROGMEM const uint8_t *image, EPD_stage stage, bool f
 
 			}
 			*/
-		} else {
-			for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
-				this->line(line, &image[line * this->bytes_per_line], 0, true, stage);
-			}
+	} else {
+		for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
+			this->line(line, &image[line * this->bytes_per_line], 0, true, stage);
 		}
 	}
 }
