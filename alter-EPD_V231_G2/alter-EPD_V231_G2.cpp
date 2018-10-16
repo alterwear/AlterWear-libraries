@@ -395,22 +395,9 @@ void EPD_Class::frame_fixed(uint8_t fixed_value, EPD_stage stage) {
 // 	}
 // }
 
-void EPD_Class::frame_data(PROGMEM const uint8_t *image, EPD_stage stage, bool flip=false, int *turn_on=nullptr, int turn_on_size=0){
+void EPD_Class::frame_data(PROGMEM const uint8_t *image, EPD_stage stage, bool flip=false, int *turn_on=nullptr, int size=0){
 	for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
 		if (turn_on != NULL){
-
-			// my original approach to the image_lines function was to create the array of line indices
-			// within the image_lines function in the .h file, but the image wasn't showing up. I think 
-			// the error was somehow because of how I was passing in the pointer to the functions, and 
-			// when line() was called, the pointer was null and thus no image could show up. 
-
-			// so instead I instantiated the array within this function
-			int size = turn_on_size;
-			/*
-			int bloop[size];
-			for (int i = 0; i < size; i++)
-				bloop[i] = i;
-			*/
 
 			for (int index = 0; index < size; index++) {
 				//this->line(bloop[index], &image[index * this->bytes_per_line], 0, true, stage, flip);
