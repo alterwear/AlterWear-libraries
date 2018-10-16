@@ -236,47 +236,12 @@ void loop() {
 	EPD.setFactor(temperature); // adjust for current temperature
 
 	int delay_counts = 50;
-	switch(state) {
-	default:
-	case 0:         // clear the screen
-		EPD.clear();
-		state = 1;
-		delay_counts = 5;  // reduce delay so first image comes up quickly
-		break;
+	EPD.clear();
+	delay_counts = 5; // reduce delay so first image comes up quickly
 
-	case 1:         // clear -> text
-#if EPD_IMAGE_ONE_ARG
-    EPD.image_lines(IMAGE_1_BITS);
-#elif EPD_IMAGE_TWO_ARG
-    EPD.image_lines(IMAGE_2_BITS, 10);
-#else
-#error "unsupported image function"
-#endif
-		++state;
-		break;
+	EPD.image_lines(IMAGE_2_BITS, 10);
+	delay_counts = 50; // keep next image up for a bit.
 
-// 	case 2:         // text -> picture
-// #if EPD_IMAGE_ONE_ARG
-// 		EPD.image_fast(IMAGE_2_BITS);
-// #elif EPD_IMAGE_TWO_ARG
-// 		EPD.image_fast(IMAGE_2_BITS);
-// #else
-// #error "unsupported image function"
-// #endif
-// 		++state;
-// 		break;
-
-// 	case 3:        // picture -> text
-// #if EPD_IMAGE_ONE_ARG
-// 		EPD.image_flip(IMAGE_1_BITS);
-// #elif EPD_IMAGE_TWO_ARG
-// 		EPD.image_flip(IMAGE_1_BITS);
-// #else
-// #error "unsupported image function"
-// #endif
-// 		state = 2;  // back to picture next time
-// 		break;
-	}
 	EPD.end();   // power down the EPD panel
 
 	// flash LED for 5 seconds
@@ -286,4 +251,8 @@ void loop() {
 		digitalWrite(Pin_RED_LED, LED_OFF);
 		delay(50);
 	}
+
+	
+
+	
 }
