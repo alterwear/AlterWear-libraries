@@ -184,6 +184,7 @@ public:
 		//creating array of index of lines
 		//int turn_on_size = 10;
 		int turn_on[size];
+		//std::fill( turn_on, turn_on + sizeof( turn_on ), 0 ); // fill array with zeroes first.
 		for (int i = 0; i < size; i++) {
 			int random_integer = rand();
         	turn_on[i] = random_integer%this->lines_per_display;

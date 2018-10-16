@@ -391,15 +391,31 @@ void EPD_Class::frame_fixed(uint8_t fixed_value, EPD_stage stage) {
 
 void EPD_Class::frame_data(PROGMEM const uint8_t *image, EPD_stage stage, bool flip=false, int *turn_on=nullptr, int size=0){
 	for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
-		if (turn_on != NULL){
+		if (size > 0){
+			if (turn_on[line] > 0) {
+				this->line(line, &image[line * this->bytes_per_line], 0, true, stage);
+			} else {
+				// don't turn on the line...
+			}
+			/*
 			for (int index = 0; index < size; index++) {
-				if (turn_on[index]) {
+				if (turn_on[index] > 0) {
+					// line definition:
 					//void EPD_Class::line(uint16_t line, const uint8_t *data, uint8_t fixed_value, bool read_progmem, EPD_stage stage, bool flip=false) {
-					this->line(turn_on[index], &image[index * this->bytes_per_line], 0, true, stage);
+					
+					// passing in turn_on[index] results in a random series of bits flipped on.
+					// They look like a sub-set of the image, but they aren't.
+					// The lines extend across the long way of the 2.0 eink display.
+					//this->line(turn_on[index], &image[index * this->bytes_per_line], 0, true, stage);
+
+					// passing line but using index as the index results in vertical stripes
 					//this->line(line, &image[index * this->bytes_per_line], 0, true, stage);
+
+					
 				}
 
 			}
+			*/
 		} else {
 			for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
 				this->line(line, &image[line * this->bytes_per_line], 0, true, stage);
