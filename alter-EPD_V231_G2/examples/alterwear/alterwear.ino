@@ -226,6 +226,16 @@ void checkEPD() {
 	}
 }
 
+void flashLED(int delay_count) {
+	// flash LED for 5 seconds
+	for (int x = 0; x < delay_count; ++x) {
+		digitalWrite(Pin_RED_LED, LED_ON);
+		delay(50);
+		digitalWrite(Pin_RED_LED, LED_OFF);
+		delay(50);
+	}
+}
+
 // main loop
 void loop() {
 	
@@ -235,24 +245,16 @@ void loop() {
 
 	EPD.setFactor(temperature); // adjust for current temperature
 
-	int delay_counts = 50;
-	EPD.clear();
-	delay_counts = 5; // reduce delay so first image comes up quickly
+	EPD.clear(); // always clear screen at the beginning.
+	flashLED(5); // reduce delay so first image comes up quickly
 
 	EPD.image_lines(IMAGE_2_BITS, 10);
-	delay_counts = 50; // keep next image up for a bit.
+	flashLED(50); // keep next image up for a bit.
+	EPD.image_lines(IMAGE_2_BITS, 30);
+	flashLED(50);
 
 	EPD.end();   // power down the EPD panel
 
-	// flash LED for 5 seconds
-	for (int x = 0; x < delay_counts; ++x) {
-		digitalWrite(Pin_RED_LED, LED_ON);
-		delay(50);
-		digitalWrite(Pin_RED_LED, LED_OFF);
-		delay(50);
-	}
-
 	
-
 	
 }
