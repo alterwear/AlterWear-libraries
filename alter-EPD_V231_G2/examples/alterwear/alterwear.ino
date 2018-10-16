@@ -200,14 +200,15 @@ void setup() {
 
 static int state = 0;
 
-
-// main loop
-void loop() {
+int getTemperature() {
 	int temperature = S5813A.read();
 	Serial.print("Temperature = ");
 	Serial.print(temperature, DEC);
 	Serial.println(" Celsius");
+	return temperature;
+}
 
+void checkEPD() {
 	EPD.begin(); // power up the EPD panel
 	switch (EPD.error()) {
 	case EPD_OK:
@@ -223,6 +224,14 @@ void loop() {
 		Serial.println("EPD: DC failed");
 		break;
 	}
+}
+
+// main loop
+void loop() {
+	
+	int temperature = getTemperature();
+
+	checkEPD();
 
 	EPD.setFactor(temperature); // adjust for current temperature
 

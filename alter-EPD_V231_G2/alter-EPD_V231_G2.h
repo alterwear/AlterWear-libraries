@@ -179,6 +179,7 @@ public:
 
 	void image_lines(PROGMEM const uint8_t *image, uint8_t size) {
 		Serial.print("alter-epd-v231-g2, image_lines");
+		
 
 		//creating array of index of lines
 		//int turn_on_size = 10;
