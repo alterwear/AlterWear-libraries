@@ -395,14 +395,14 @@ void EPD_Class::frame_data(PROGMEM const uint8_t *image, EPD_stage stage, bool f
 			for (int index = 0; index < size; index++) {
 				if (turn_on[index]) {
 					//void EPD_Class::line(uint16_t line, const uint8_t *data, uint8_t fixed_value, bool read_progmem, EPD_stage stage, bool flip=false) {
-					this->line(turn_on[index], &image[index * this->bytes_per_line], 0, true, stage, flip);
-					//this->line(line, &image[index * this->bytes_per_line], 0, true, stage, flip);
+					this->line(turn_on[index], &image[index * this->bytes_per_line], 0, true, stage);
+					//this->line(line, &image[index * this->bytes_per_line], 0, true, stage);
 				}
 
 			}
 		} else {
 			for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
-				this->line(line, &image[line * this->bytes_per_line], 0, true, stage, flip);
+				this->line(line, &image[line * this->bytes_per_line], 0, true, stage);
 			}
 		}
 	}
