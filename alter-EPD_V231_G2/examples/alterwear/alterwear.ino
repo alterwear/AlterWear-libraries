@@ -239,7 +239,7 @@ void loop() {
 #if EPD_IMAGE_ONE_ARG
     EPD.image_lines(IMAGE_1_BITS);
 #elif EPD_IMAGE_TWO_ARG
-    EPD.image_lines(IMAGE_2_BITS);
+    EPD.image_lines(IMAGE_2_BITS, 10);
 #else
 #error "unsupported image function"
 #endif
