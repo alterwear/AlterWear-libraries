@@ -406,12 +406,15 @@ void EPD_Class::frame_data(PROGMEM const uint8_t *image, EPD_stage stage, bool f
 
 			// so instead I instantiated the array within this function
 			int size = turn_on_size;
+			/*
 			int bloop[size];
 			for (int i = 0; i < size; i++)
 				bloop[i] = i;
+			*/
 
 			for (int index = 0; index < size; index++) {
-				this->line(bloop[index], &image[index * this->bytes_per_line], 0, true, stage, flip);
+				//this->line(bloop[index], &image[index * this->bytes_per_line], 0, true, stage, flip);
+				this->line(turn_on[index], &image[index * this->bytes_per_line], 0, true, stage, flip);
 			}
 
 			// for (int index = 0; index < turn_on_size; index++) {
