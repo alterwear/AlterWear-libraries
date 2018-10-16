@@ -241,7 +241,7 @@ void loop() {
 	case 0:         // clear the screen
 		EPD.clear();
 		state = 1;
-		delay_counts = 5;  // reduce delay so first image come up quickly
+		delay_counts = 5;  // reduce delay so first image comes up quickly
 		break;
 
 	case 1:         // clear -> text
