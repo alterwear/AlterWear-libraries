@@ -22,6 +22,7 @@
 #include <Energia.h>
 #else
 #include <Arduino.h>
+#include <EEPROM.h>
 #endif
 
 #include <SPI.h>
@@ -82,6 +83,17 @@ typedef enum {
 	EPD_BORDER_BYTE_ZERO,  // border byte == 0x00 requred
 	EPD_BORDER_BYTE_SET,   // border byte needs to be set
 } EPD_border_byte;
+
+typedef enum {
+	ALTERWEAR_DEFAULT, // no special effects, default behavior.
+	ALTERWEAR_SMEAR, // Turns on a subset of lines which 'smear' across the rest of the screen
+	ALTERWEAR_FLIP, // flips the image horizontally
+	ALTERWEAR_HALF_FLIP,
+	ALTERWEAR_VERTICAL_LINES,
+	ALTERWEAR_IDK,
+	ALTERWEAR_SUBSET,
+	ALTERWEAR_INTERLACE,
+} ALTERWEAR_EFFECT;
 
 typedef void EPD_reader(void *buffer, uint32_t address, uint16_t length);
 
@@ -173,8 +185,62 @@ public:
 		Serial.print("alter-epd-v231-g2, image_flip");
 		// image_fast but calling a different function deeper in
 		// second arg is "EPD_STAGE"
-		this->frame_fixed_repeat(0xaa, EPD_compensate); // all black doesn't need to be fliped
-		this->frame_data_repeat(image, EPD_normal, true); // image does
+		this->frame_fixed_repeat(0xaa, EPD_compensate); // all black doesn't need to be flipped
+		this->frame_data_repeat(image, EPD_normal, ALTERWEAR_FLIP); // image does
+	}
+
+	void image_lines(PROGMEM const uint8_t *image, uint8_t size) {
+		Serial.print("alter-epd-v231-g2, image_lines");
+		//creating array of index of lines
+		//int turn_on_size = 10;
+		int turn_on[size];
+		//std::fill( turn_on, turn_on + sizeof( turn_on ), 0 ); // fill array with zeroes first.
+		for (int i = 0; i < size; i++) {
+			int random_integer = rand();
+        	turn_on[i] = random_integer%this->lines_per_display;
+	    }
+
+		// this->frame_fixed_repeat(0xff, EPD_compensate); // all black
+		this->frame_data_repeat(image, EPD_normal, ALTERWEAR_VERTICAL_LINES, turn_on, size);
+	}
+
+	void image_subset(PROGMEM const uint8_t *image, uint8_t size) {
+		Serial.print("alter-epd-v231-g2, image_subset");
+		//this->frame_fixed_repeat(0xaa, EPD_compensate);
+
+		//creating array of index of lines
+		//int turn_on_size = 10;
+
+		int turn_on[this->lines_per_display];
+		memset(turn_on,0,sizeof(turn_on));  // fill array with zeroes first.
+		//std::fill( turn_on, turn_on + sizeof( turn_on ), 0 ); 
+		int index = 0;
+		for (int i = 0; i < size; i++) {
+			int random_integer = rand();
+        	turn_on[i] = random_integer%this->lines_per_display;
+			//turn_on[i] = random_integer%2;
+	    }
+
+		// this->frame_fixed_repeat(0xff, EPD_compensate); // all black
+		this->frame_data_repeat(image, EPD_normal, ALTERWEAR_SUBSET, turn_on, size);
+	}
+
+	void image_interlace(PROGMEM const uint8_t *image0) {
+		Serial.print("alter-epd-v231-g2, image_interlace");
+		//this->frame_fixed_repeat(0xaa, EPD_compensate);
+		this->frame_fixed_repeat(0xaa, EPD_compensate); // all black
+		this->frame_data_repeat(image0, EPD_normal);
+		this->frame_data_repeat(image0, EPD_inverse);
+	}
+
+	void image_half_flip(PROGMEM const uint8_t *image) {
+		Serial.print("alter-epd-v231-g2, image_half_flip");
+		this->frame_fixed_repeat(0xaa, EPD_compensate); // all black
+		this->frame_data_repeat(image, EPD_normal, ALTERWEAR_HALF_FLIP);
+	}
+
+	void image_eeprom() {
+		byte value = EEPROM.read(0);
 	}
 
 #if defined(EPD_ENABLE_EXTRA_SRAM)
@@ -193,7 +259,7 @@ public:
 
 	// single frame refresh
 	void frame_fixed(uint8_t fixed_value, EPD_stage stage);
-	void frame_data(PROGMEM const uint8_t *new_image, EPD_stage stage, bool flip=false);
+	void frame_data(PROGMEM const uint8_t *new_image, EPD_stage stage, ALTERWEAR_EFFECT effect=ALTERWEAR_DEFAULT, int *turn_on=nullptr, int turn_on_size=0);
 #if defined(EPD_ENABLE_EXTRA_SRAM)
 	void frame_sram(const uint8_t *new_image, EPD_stage stage);
 #endif
@@ -201,7 +267,7 @@ public:
 
 	// stage_time frame refresh
 	void frame_fixed_repeat(uint8_t fixed_value, EPD_stage stage);
-	void frame_data_repeat(PROGMEM const uint8_t *new_image, EPD_stage stage, bool flip=false);
+	void frame_data_repeat(PROGMEM const uint8_t *new_image, EPD_stage stage, ALTERWEAR_EFFECT effect=ALTERWEAR_DEFAULT, int *turn_on=nullptr, int turn_on_size=0);
 #if defined(EPD_ENABLE_EXTRA_SRAM)
 	void frame_sram_repeat(const uint8_t *new_image, EPD_stage stage);
 #endif
@@ -217,7 +283,7 @@ public:
 
 	// single line display - very low-level
 	// also has to handle AVR progmem
-	void line(uint16_t line, const uint8_t *data, uint8_t fixed_value, bool read_progmem, EPD_stage stage, bool flip=false);
+	void line(uint16_t line, const uint8_t *data, uint8_t fixed_value, bool read_progmem, EPD_stage stage, ALTERWEAR_EFFECT effect=ALTERWEAR_DEFAULT);
 
 	// inline static void attachInterrupt();
 	// inline static void detachInterrupt();

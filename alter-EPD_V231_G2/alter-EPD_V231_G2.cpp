@@ -389,12 +389,106 @@ void EPD_Class::frame_fixed(uint8_t fixed_value, EPD_stage stage) {
 	}
 }
 
+void EPD_Class::frame_data(PROGMEM const uint8_t *image, EPD_stage stage, ALTERWEAR_EFFECT effect, int *turn_on=nullptr, int size=0){
+	int index = 0;
+	switch(effect){
+	case ALTERWEAR_SMEAR:
+		if (size > 0) {
+			for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
+				if ( (index < size) && (turn_on[index] > 0) && (turn_on[index] == line)) {
+					this->line(line, &image[line * this->bytes_per_line], 0, true, stage);
+					index++;
+				} else {
+					// don't turn on the line...
+				}
+			}
+		}
+		break;
+	case ALTERWEAR_FLIP:
+		for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
+			this->line(line, &image[line * this->bytes_per_line], 0, true, stage, effect);
+		}
+		break;
+	case ALTERWEAR_HALF_FLIP:
+		for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
+			this->line(line, &image[line * this->bytes_per_line], 0, true, stage, effect);
+		}
+		break;
+	case ALTERWEAR_IDK:
+		for (int index = 0; index < size; index++) {
+			if (turn_on[index] > 0) {
+				// line definition:
+				//void EPD_Class::line(uint16_t line, const uint8_t *data, uint8_t fixed_value, bool read_progmem, EPD_stage stage, bool flip=false) {
+				
+				// passing in turn_on[index] results in a random series of bits flipped on.
+				// They look like a sub-set of the image, but they aren't.
+				// The lines extend across the long way of the 2.0 eink display.
+				this->line(turn_on[index], &image[index * this->bytes_per_line], 0, true, stage);
 
-void EPD_Class::frame_data(PROGMEM const uint8_t *image, EPD_stage stage, bool flip=false){
+				// passing line but using index as the index results in vertical stripes
+				//this->line(line, &image[index * this->bytes_per_line], 0, true, stage, );
+			}
+		}
+		break;
+	case ALTERWEAR_SUBSET:
+		for (int index = 0; index < size; ++index) {
+			this->line(turn_on[index], &image[turn_on[index] * this->bytes_per_line], 0, true, stage);
+		}
+		/*
+		for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
+			if (turn_on[line] > 0) {
+				this->line(line, &image[line * this->bytes_per_line], 0, true, stage);
+			}
+		}
+		*/
+		break;
+	case ALTERWEAR_VERTICAL_LINES:
+		for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
+			if (turn_on[index] > 0) {
+				// passing line but using index as the index results in vertical stripes
+				this->line(line, &image[index * this->bytes_per_line], 0, true, stage);
+			}
+		}
+		break;
+	case ALTERWEAR_DEFAULT:
+		for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
+			this->line(line, &image[line * this->bytes_per_line], 0, true, stage);
+		}
+	}
+	
+			/*
+			for (int index = 0; index < size; index++) {
+				if (turn_on[index] > 0) {
+					// line definition:
+					//void EPD_Class::line(uint16_t line, const uint8_t *data, uint8_t fixed_value, bool read_progmem, EPD_stage stage, bool flip=false) {
+					
+					// passing in turn_on[index] results in a random series of bits flipped on.
+					// They look like a sub-set of the image, but they aren't.
+					// The lines extend across the long way of the 2.0 eink display.
+					//this->line(turn_on[index], &image[index * this->bytes_per_line], 0, true, stage);
+
+					// passing line but using index as the index results in vertical stripes
+					//this->line(line, &image[index * this->bytes_per_line], 0, true, stage);
+
+					
+				}
+
+			}
+			*/
+}
+
+
+/*
+void EPD_Class::frame_data(PROGMEM const uint8_t *image, EPD_stage stage, bool flip=false, arr[] turn_on){
 	for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
-		this->line(line, &image[line * this->bytes_per_line], 0, true, stage, flip);
+		if (turn_on== 1){
+			this->line(line, &image[line * this->bytes_per_line], 0, true, stage, flip);
+		} else {
+			//blank
+		}
 	}
 }
+*/
 
 
 #if defined(EPD_ENABLE_EXTRA_SRAM)
@@ -433,11 +527,11 @@ void EPD_Class::frame_fixed_repeat(uint8_t fixed_value, EPD_stage stage) {
 }
 
 
-void EPD_Class::frame_data_repeat(PROGMEM const uint8_t *image, EPD_stage stage, bool flip=false) {
+void EPD_Class::frame_data_repeat(PROGMEM const uint8_t *image, EPD_stage stage, ALTERWEAR_EFFECT effect=ALTERWEAR_DEFAULT, int *turn_on=nullptr, int turn_on_size=0) {
 	long stage_time = this->factored_stage_time;
 	do {
 		unsigned long t_start = millis();
-		this->frame_data(image, stage, flip);
+		this->frame_data(image, stage, effect, turn_on, turn_on_size);
 		unsigned long t_end = millis();
 		if (t_end > t_start) {
 			stage_time -= t_end - t_start;
@@ -623,7 +717,7 @@ void EPD_Class::border_dummy_line() {
 
 
 // output one line of scan and data bytes to the display
-void EPD_Class::line(uint16_t line, const uint8_t *data, uint8_t fixed_value, bool read_progmem, EPD_stage stage, bool flip=false) {
+void EPD_Class::line(uint16_t line, const uint8_t *data, uint8_t fixed_value, bool read_progmem, EPD_stage stage, ALTERWEAR_EFFECT effect=ALTERWEAR_DEFAULT) {
 
 	//Serial.print("alter-version, line... ");
 	SPI_on();
@@ -646,10 +740,18 @@ void EPD_Class::line(uint16_t line, const uint8_t *data, uint8_t fixed_value, bo
 		// w/ even_pixels called on top, and odd_pixels called below the loop,
 		// the images are flipped
 		//if odd_pixels is called first, the image is normal
-		if (flip) {
-			this->even_pixels(data, fixed_value, read_progmem, stage);
-		} else {
-			this->odd_pixels(data, fixed_value, read_progmem, stage);
+
+		// note, cutting out the "break" statements makes a super insane plaid experience.
+		switch(effect){
+			case ALTERWEAR_FLIP:
+				this->even_pixels(data, fixed_value, read_progmem, stage);
+				break;
+			case ALTERWEAR_HALF_FLIP:
+				this->odd_pixels(data, fixed_value, read_progmem, stage);
+				break;
+			case ALTERWEAR_DEFAULT:
+				this->odd_pixels(data, fixed_value, read_progmem, stage);
+				break;
 		}
 		
 
@@ -666,10 +768,16 @@ void EPD_Class::line(uint16_t line, const uint8_t *data, uint8_t fixed_value, bo
 		// nothing happens.
 		// if the call to one happens above, and the call to the other happens below,
 		// everything is fine.
-		if (flip) {
-			this->odd_pixels(data, fixed_value, read_progmem, stage);
-		} else {
-			this->even_pixels(data, fixed_value, read_progmem, stage);
+		switch(effect){
+			case ALTERWEAR_FLIP:
+				this->odd_pixels(data, fixed_value, read_progmem, stage);
+				break;
+			case ALTERWEAR_HALF_FLIP:
+				this->odd_pixels(data, fixed_value, read_progmem, stage);
+				break;
+			case ALTERWEAR_DEFAULT:
+				this->even_pixels(data, fixed_value, read_progmem, stage);
+				break;
 		}
 
 	} else {

@@ -200,14 +200,15 @@ void setup() {
 
 static int state = 0;
 
-
-// main loop
-void loop() {
+int getTemperature() {
 	int temperature = S5813A.read();
 	Serial.print("Temperature = ");
 	Serial.print(temperature, DEC);
 	Serial.println(" Celsius");
+	return temperature;
+}
 
+void checkEPD() {
 	EPD.begin(); // power up the EPD panel
 	switch (EPD.error()) {
 	case EPD_OK:
@@ -223,58 +224,35 @@ void loop() {
 		Serial.println("EPD: DC failed");
 		break;
 	}
+}
 
-	EPD.setFactor(temperature); // adjust for current temperature
-
-	int delay_counts = 50;
-	switch(state) {
-	default:
-	case 0:         // clear the screen
-		EPD.clear();
-		state = 1;
-		delay_counts = 5;  // reduce delay so first image come up quickly
-		break;
-
-	case 1:         // clear -> text
-#if EPD_IMAGE_ONE_ARG
-    EPD.image(IMAGE_1_BITS);
-#elif EPD_IMAGE_TWO_ARG
-    EPD.image_0(IMAGE_1_BITS);
-#else
-#error "unsupported image function"
-#endif
-		++state;
-		break;
-
-	case 2:         // text -> picture
-#if EPD_IMAGE_ONE_ARG
-		EPD.image_fast(IMAGE_2_BITS);
-#elif EPD_IMAGE_TWO_ARG
-		EPD.image_fast(IMAGE_2_BITS);
-#else
-#error "unsupported image function"
-#endif
-		++state;
-		break;
-
-	case 3:        // picture -> text
-#if EPD_IMAGE_ONE_ARG
-		EPD.image_flip(IMAGE_1_BITS);
-#elif EPD_IMAGE_TWO_ARG
-		EPD.image_flip(IMAGE_1_BITS);
-#else
-#error "unsupported image function"
-#endif
-		state = 2;  // back to picture next time
-		break;
-	}
-	EPD.end();   // power down the EPD panel
-
+void flashLED(int delay_count) {
 	// flash LED for 5 seconds
-	for (int x = 0; x < delay_counts; ++x) {
+	for (int x = 0; x < delay_count; ++x) {
 		digitalWrite(Pin_RED_LED, LED_ON);
 		delay(50);
 		digitalWrite(Pin_RED_LED, LED_OFF);
 		delay(50);
 	}
+}
+
+// main loop
+void loop() {
+	
+	int temperature = getTemperature();
+
+	checkEPD();
+
+	EPD.setFactor(temperature); // adjust for current temperature
+
+	EPD.clear(); // always clear screen at the beginning.
+	flashLED(5); // reduce delay so first image comes up quickly
+
+	EPD.image_half_flip(IMAGE_2_BITS);
+	flashLED(50); // keep next image up for a bit.
+
+	EPD.end();   // power down the EPD panel
+
+	
+	
 }
