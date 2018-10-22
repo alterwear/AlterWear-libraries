@@ -585,6 +585,9 @@ void EPD_Class::even_pixels(const uint8_t *data, uint8_t fixed_value, bool read_
 			uint8_t pixels;
 			if (read_progmem) {
 				pixels = pgm_read_byte_near(data + b) & 0xaa;
+				byte value = EEPROM.read(0);
+				Serial.print("eeprom value inside .cpp: ");
+				Serial.println(value);
 			} else {
 				pixels = data[b] & 0xaa;
 			}

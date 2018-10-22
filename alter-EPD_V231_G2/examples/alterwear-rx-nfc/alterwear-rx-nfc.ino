@@ -115,7 +115,7 @@ PROGMEM const
 
 //EEPROM
 int eeprom_addr = 0;
-int current_state = 0;
+int current_state = 13;
 
 
 // define the E-Ink display
@@ -266,7 +266,7 @@ void loop() {
 	EPD.clear(); // always clear screen at the beginning.
 	flashLED(5); // reduce delay so first image comes up quickly
 
-	EPD.image_half_flip(IMAGE_2_BITS);
+	EPD.image_eeprom(IMAGE_2_BITS);
 	flashLED(50); // keep next image up for a bit.
 
 	EPD.end();   // power down the EPD panel
