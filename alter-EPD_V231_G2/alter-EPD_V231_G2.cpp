@@ -747,7 +747,7 @@ void EPD_Class::line(uint16_t line, const uint8_t *data, uint8_t fixed_value, bo
 				this->even_pixels(data, fixed_value, read_progmem, stage);
 				break;
 			case ALTERWEAR_HALF_FLIP:
-				this->even_pixels(data, fixed_value, read_progmem, stage);
+				this->odd_pixels(data, fixed_value, read_progmem, stage);
 				break;
 			case ALTERWEAR_DEFAULT:
 				this->odd_pixels(data, fixed_value, read_progmem, stage);

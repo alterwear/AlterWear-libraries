@@ -91,6 +91,7 @@ typedef enum {
 	ALTERWEAR_VERTICAL_LINES,
 	ALTERWEAR_IDK,
 	ALTERWEAR_SUBSET,
+	ALTERWEAR_INTERLACE,
 } ALTERWEAR_EFFECT;
 
 typedef void EPD_reader(void *buffer, uint32_t address, uint16_t length);
@@ -223,8 +224,18 @@ public:
 		this->frame_data_repeat(image, EPD_normal, ALTERWEAR_SUBSET, turn_on, size);
 	}
 
-	void image_interlace(PROGMEM const uint8_t *image0, PROGMEM const uint8_t *image1) {
+	void image_interlace(PROGMEM const uint8_t *image0) {
+		Serial.print("alter-epd-v231-g2, image_interlace");
+		//this->frame_fixed_repeat(0xaa, EPD_compensate);
+		this->frame_fixed_repeat(0xaa, EPD_compensate); // all black
+		this->frame_data_repeat(image0, EPD_normal);
+		this->frame_data_repeat(image0, EPD_inverse);
+	}
 
+	void image_half_flip(PROGMEM const uint8_t *image) {
+		Serial.print("alter-epd-v231-g2, image_half_flip");
+		this->frame_fixed_repeat(0xaa, EPD_compensate); // all black
+		this->frame_data_repeat(image, EPD_normal, ALTERWEAR_HALF_FLIP);
 	}
 
 #if defined(EPD_ENABLE_EXTRA_SRAM)
