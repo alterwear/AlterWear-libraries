@@ -87,6 +87,7 @@ typedef enum {
 	ALTERWEAR_DEFAULT, // no special effects, default behavior.
 	ALTERWEAR_SMEAR, // Turns on a subset of lines which 'smear' across the rest of the screen
 	ALTERWEAR_FLIP, // flips the image horizontally
+	ALTERWEAR_HALF_FLIP,
 } ALTERWEAR_EFFECT;
 
 typedef void EPD_reader(void *buffer, uint32_t address, uint16_t length);
