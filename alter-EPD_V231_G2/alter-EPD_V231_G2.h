@@ -240,7 +240,10 @@ public:
 	}
 
 	void image_eeprom() {
+		Serial.print("alter-epd-v231-g2, image_eeprom");
 		byte value = EEPROM.read(0);
+		Serial.print("mem value: ");
+		
 	}
 
 #if defined(EPD_ENABLE_EXTRA_SRAM)
