@@ -88,6 +88,8 @@ typedef enum {
 	ALTERWEAR_SMEAR, // Turns on a subset of lines which 'smear' across the rest of the screen
 	ALTERWEAR_FLIP, // flips the image horizontally
 	ALTERWEAR_HALF_FLIP,
+	ALTERWEAR_VERTICAL_LINES,
+	ALTERWEAR_IDK,
 } ALTERWEAR_EFFECT;
 
 typedef void EPD_reader(void *buffer, uint32_t address, uint16_t length);
@@ -186,8 +188,6 @@ public:
 
 	void image_lines(PROGMEM const uint8_t *image, uint8_t size) {
 		Serial.print("alter-epd-v231-g2, image_lines");
-		
-
 		//creating array of index of lines
 		//int turn_on_size = 10;
 		int turn_on[size];
@@ -198,7 +198,15 @@ public:
 	    }
 
 		// this->frame_fixed_repeat(0xff, EPD_compensate); // all black
-		this->frame_data_repeat(image, EPD_normal, ALTERWEAR_SMEAR, turn_on, size);
+		this->frame_data_repeat(image, EPD_normal, ALTERWEAR_IDK, turn_on, size);
+	}
+
+	void image_test(PROGMEM const uint8_t *image, uint8_t size) {
+		Serial.print("alter-epd-v231-g2, image_test");
+		this->frame_fixed_repeat(0xaa, EPD_compensate);
+		//this->frame_fixed_repeat(0xaa, EPD_white);
+		//this->frame_data_repeat(image, EPD_inverse);
+		//this->frame_data_repeat(image, EPD_normal, ALTERWEAR_VERTICAL_LINES, turn_on, size);
 	}
 
 #if defined(EPD_ENABLE_EXTRA_SRAM)

@@ -391,8 +391,8 @@ void EPD_Class::frame_fixed(uint8_t fixed_value, EPD_stage stage) {
 
 void EPD_Class::frame_data(PROGMEM const uint8_t *image, EPD_stage stage, ALTERWEAR_EFFECT effect, int *turn_on=nullptr, int size=0){
 	int index = 0;
-
-	if (effect == ALTERWEAR_SMEAR) {
+	switch(effect){
+	case ALTERWEAR_SMEAR:
 		if (size > 0) {
 			for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
 				if ( (index < size) && (turn_on[index] > 0) && (turn_on[index] == line)) {
@@ -403,6 +403,47 @@ void EPD_Class::frame_data(PROGMEM const uint8_t *image, EPD_stage stage, ALTERW
 				}
 			}
 		}
+		break;
+	case ALTERWEAR_FLIP:
+		for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
+			this->line(line, &image[line * this->bytes_per_line], 0, true, stage, effect);
+		}
+		break;
+	case ALTERWEAR_HALF_FLIP:
+		for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
+			this->line(line, &image[line * this->bytes_per_line], 0, true, stage, effect);
+		}
+		break;
+	case ALTERWEAR_IDK
+		for (int index = 0; index < size; index++) {
+			if (turn_on[index] > 0) {
+				// line definition:
+				//void EPD_Class::line(uint16_t line, const uint8_t *data, uint8_t fixed_value, bool read_progmem, EPD_stage stage, bool flip=false) {
+				
+				// passing in turn_on[index] results in a random series of bits flipped on.
+				// They look like a sub-set of the image, but they aren't.
+				// The lines extend across the long way of the 2.0 eink display.
+				this->line(turn_on[index], &image[index * this->bytes_per_line], 0, true, stage);
+
+				// passing line but using index as the index results in vertical stripes
+				//this->line(line, &image[index * this->bytes_per_line], 0, true, stage, );
+			}
+		}
+		break;
+	case ALTERWEAR_VERTICAL_LINES:
+		for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
+			if (turn_on[index] > 0) {
+				// passing line but using index as the index results in vertical stripes
+				this->line(line, &image[index * this->bytes_per_line], 0, true, stage);
+			}
+		}
+		break;
+	case ALTERWEAR_DEFAULT:
+		for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
+			this->line(line, &image[line * this->bytes_per_line], 0, true, stage);
+		}
+	}
+	
 			/*
 			for (int index = 0; index < size; index++) {
 				if (turn_on[index] > 0) {
@@ -422,16 +463,6 @@ void EPD_Class::frame_data(PROGMEM const uint8_t *image, EPD_stage stage, ALTERW
 
 			}
 			*/
-	} if (effect == ALTERWEAR_FLIP) {
-		for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
-			this->line(line, &image[line * this->bytes_per_line], 0, true, stage, effect);
-		}
-
-	} else {
-		for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
-			this->line(line, &image[line * this->bytes_per_line], 0, true, stage);
-		}
-	}
 }
 
 
