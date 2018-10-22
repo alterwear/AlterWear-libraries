@@ -669,7 +669,7 @@ void EPD_Class::border_dummy_line() {
 
 
 // output one line of scan and data bytes to the display
-void EPD_Class::line(uint16_t line, const uint8_t *data, uint8_t fixed_value, bool read_progmem, EPD_stage stage, bool flip=false) {
+void EPD_Class::line(uint16_t line, const uint8_t *data, uint8_t fixed_value, bool read_progmem, EPD_stage stage, ALTERWEAR_EFFECT effect=ALTERWEAR_DEFAULT) {
 
 	//Serial.print("alter-version, line... ");
 	SPI_on();
@@ -692,7 +692,7 @@ void EPD_Class::line(uint16_t line, const uint8_t *data, uint8_t fixed_value, bo
 		// w/ even_pixels called on top, and odd_pixels called below the loop,
 		// the images are flipped
 		//if odd_pixels is called first, the image is normal
-		if (flip) {
+		if (effect == ALTERWEAR_FLIP) {
 			this->even_pixels(data, fixed_value, read_progmem, stage);
 		} else {
 			this->odd_pixels(data, fixed_value, read_progmem, stage);
@@ -712,7 +712,7 @@ void EPD_Class::line(uint16_t line, const uint8_t *data, uint8_t fixed_value, bo
 		// nothing happens.
 		// if the call to one happens above, and the call to the other happens below,
 		// everything is fine.
-		if (flip) {
+		if (effect == ALTERWEAR_FLIP) {
 			this->odd_pixels(data, fixed_value, read_progmem, stage);
 		} else {
 			this->even_pixels(data, fixed_value, read_progmem, stage);

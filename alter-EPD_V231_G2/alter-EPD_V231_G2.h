@@ -240,7 +240,7 @@ public:
 
 	// single line display - very low-level
 	// also has to handle AVR progmem
-	void line(uint16_t line, const uint8_t *data, uint8_t fixed_value, bool read_progmem, EPD_stage stage, bool flip=false);
+	void line(uint16_t line, const uint8_t *data, uint8_t fixed_value, bool read_progmem, EPD_stage stage, ALTERWEAR_EFFECT effect=ALTERWEAR_DEFAULT);
 
 	// inline static void attachInterrupt();
 	// inline static void detachInterrupt();
