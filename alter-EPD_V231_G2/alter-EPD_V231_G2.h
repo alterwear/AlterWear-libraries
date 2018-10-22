@@ -83,6 +83,12 @@ typedef enum {
 	EPD_BORDER_BYTE_SET,   // border byte needs to be set
 } EPD_border_byte;
 
+typedef enum {
+	ALTERWEAR_DEFAULT, // no special effects, default behavior.
+	ALTERWEAR_SMEAR, // Turns on a subset of lines which 'smear' across the rest of the screen
+	ALTERWEAR_FLIP, // flips the image horizontally
+} ALTERWEAR_EFFECT;
+
 typedef void EPD_reader(void *buffer, uint32_t address, uint16_t length);
 
 class EPD_Class {
@@ -174,7 +180,7 @@ public:
 		// image_fast but calling a different function deeper in
 		// second arg is "EPD_STAGE"
 		this->frame_fixed_repeat(0xaa, EPD_compensate); // all black doesn't need to be flipped
-		this->frame_data_repeat(image, EPD_normal, true); // image does
+		this->frame_data_repeat(image, EPD_normal, ALTERWEAR_FLIP); // image does
 	}
 
 	void image_lines(PROGMEM const uint8_t *image, uint8_t size) {
@@ -191,7 +197,7 @@ public:
 	    }
 
 		// this->frame_fixed_repeat(0xff, EPD_compensate); // all black
-		this->frame_data_repeat(image, EPD_normal, false, turn_on, size);
+		this->frame_data_repeat(image, EPD_normal, ALTERWEAR_SMEAR, turn_on, size);
 	}
 
 #if defined(EPD_ENABLE_EXTRA_SRAM)
@@ -210,7 +216,7 @@ public:
 
 	// single frame refresh
 	void frame_fixed(uint8_t fixed_value, EPD_stage stage);
-	void frame_data(PROGMEM const uint8_t *new_image, EPD_stage stage, bool flip=false, int *turn_on=nullptr, int turn_on_size=0);
+	void frame_data(PROGMEM const uint8_t *new_image, EPD_stage stage, ALTERWEAR_EFFECT effect=ALTERWEAR_DEFAULT, int *turn_on=nullptr, int turn_on_size=0);
 #if defined(EPD_ENABLE_EXTRA_SRAM)
 	void frame_sram(const uint8_t *new_image, EPD_stage stage);
 #endif
@@ -218,7 +224,7 @@ public:
 
 	// stage_time frame refresh
 	void frame_fixed_repeat(uint8_t fixed_value, EPD_stage stage);
-	void frame_data_repeat(PROGMEM const uint8_t *new_image, EPD_stage stage, bool flip=false, int *turn_on=nullptr, int turn_on_size=0);
+	void frame_data_repeat(PROGMEM const uint8_t *new_image, EPD_stage stage, ALTERWEAR_EFFECT effect=ALTERWEAR_DEFAULT, int *turn_on=nullptr, int turn_on_size=0);
 #if defined(EPD_ENABLE_EXTRA_SRAM)
 	void frame_sram_repeat(const uint8_t *new_image, EPD_stage stage);
 #endif
