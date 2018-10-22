@@ -22,6 +22,7 @@
 #include <Energia.h>
 #else
 #include <Arduino.h>
+#include <EEPROM.h>
 #endif
 
 #include <SPI.h>
@@ -236,6 +237,10 @@ public:
 		Serial.print("alter-epd-v231-g2, image_half_flip");
 		this->frame_fixed_repeat(0xaa, EPD_compensate); // all black
 		this->frame_data_repeat(image, EPD_normal, ALTERWEAR_HALF_FLIP);
+	}
+
+	void image_eeprom() {
+		byte value = EEPROM.read(0);
 	}
 
 #if defined(EPD_ENABLE_EXTRA_SRAM)
