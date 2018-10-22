@@ -212,7 +212,7 @@ public:
 
 	void image_subset(PROGMEM const uint8_t *image, uint8_t size) {
 		Serial.print("alter-epd-v231-g2, image_arianna");
-		this->frame_fixed_repeat(0xaa, EPD_compensate);
+		//this->frame_fixed_repeat(0xaa, EPD_compensate);
 
 		//creating array of index of lines
 		//int turn_on_size = 10;

@@ -248,8 +248,11 @@ void loop() {
 	EPD.clear(); // always clear screen at the beginning.
 	flashLED(5); // reduce delay so first image comes up quickly
 
-	EPD.image_subset(IMAGE_2_BITS, 30);
+	EPD.image_subset(IMAGE_2_BITS, 10);
 	flashLED(50); // keep next image up for a bit.
+
+	EPD.image_subset(IMAGE_2_BITS, 80);
+	flashLED(50); 
 
 	EPD.end();   // power down the EPD panel
 
