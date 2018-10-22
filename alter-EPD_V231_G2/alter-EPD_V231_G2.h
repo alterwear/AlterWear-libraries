@@ -210,7 +210,7 @@ public:
 		//this->frame_data_repeat(image, EPD_normal, ALTERWEAR_VERTICAL_LINES, turn_on, size);
 	}
 
-	void image_arianna(PROGMEM const uint8_t *image, uint8_t size) {
+	void image_subset(PROGMEM const uint8_t *image, uint8_t size) {
 		Serial.print("alter-epd-v231-g2, image_arianna");
 		this->frame_fixed_repeat(0xaa, EPD_compensate);
 
@@ -229,7 +229,6 @@ public:
 
 		// this->frame_fixed_repeat(0xff, EPD_compensate); // all black
 		this->frame_data_repeat(image, EPD_normal, ALTERWEAR_SUBSET, turn_on, size);
-
 	}
 
 #if defined(EPD_ENABLE_EXTRA_SRAM)
