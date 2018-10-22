@@ -90,6 +90,7 @@ typedef enum {
 	ALTERWEAR_HALF_FLIP,
 	ALTERWEAR_VERTICAL_LINES,
 	ALTERWEAR_IDK,
+	ALTERWEAR_SUBSET,
 } ALTERWEAR_EFFECT;
 
 typedef void EPD_reader(void *buffer, uint32_t address, uint16_t length);
@@ -207,6 +208,28 @@ public:
 		//this->frame_fixed_repeat(0xaa, EPD_white);
 		//this->frame_data_repeat(image, EPD_inverse);
 		//this->frame_data_repeat(image, EPD_normal, ALTERWEAR_VERTICAL_LINES, turn_on, size);
+	}
+
+	void image_arianna(PROGMEM const uint8_t *image, uint8_t size) {
+		Serial.print("alter-epd-v231-g2, image_arianna");
+		this->frame_fixed_repeat(0xaa, EPD_compensate);
+
+		//creating array of index of lines
+		//int turn_on_size = 10;
+
+		int turn_on[this->lines_per_display];
+		memset(turn_on,0,sizeof(turn_on));  // fill array with zeroes first.
+		//std::fill( turn_on, turn_on + sizeof( turn_on ), 0 ); 
+		int index = 0;
+		for (int i = 0; i < size; i++) {
+			int random_integer = rand();
+        	turn_on[i] = random_integer%this->lines_per_display;
+			//turn_on[i] = random_integer%2;
+	    }
+
+		// this->frame_fixed_repeat(0xff, EPD_compensate); // all black
+		this->frame_data_repeat(image, EPD_normal, ALTERWEAR_SUBSET, turn_on, size);
+
 	}
 
 #if defined(EPD_ENABLE_EXTRA_SRAM)

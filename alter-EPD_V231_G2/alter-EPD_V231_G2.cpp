@@ -414,7 +414,7 @@ void EPD_Class::frame_data(PROGMEM const uint8_t *image, EPD_stage stage, ALTERW
 			this->line(line, &image[line * this->bytes_per_line], 0, true, stage, effect);
 		}
 		break;
-	case ALTERWEAR_IDK
+	case ALTERWEAR_IDK:
 		for (int index = 0; index < size; index++) {
 			if (turn_on[index] > 0) {
 				// line definition:
@@ -429,6 +429,18 @@ void EPD_Class::frame_data(PROGMEM const uint8_t *image, EPD_stage stage, ALTERW
 				//this->line(line, &image[index * this->bytes_per_line], 0, true, stage, );
 			}
 		}
+		break;
+	case ALTERWEAR_SUBSET:
+		for (int index = 0; index < size; ++index) {
+			this->line(turn_on[index], &image[turn_on[index] * this->bytes_per_line], 0, true, stage);
+		}
+		/*
+		for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
+			if (turn_on[line] > 0) {
+				this->line(line, &image[line * this->bytes_per_line], 0, true, stage);
+			}
+		}
+		*/
 		break;
 	case ALTERWEAR_VERTICAL_LINES:
 		for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
