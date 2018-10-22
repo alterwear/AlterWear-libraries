@@ -27,3 +27,21 @@ S5813A/
 SoftwareServo/
 WebUSB/
 readme.txt
+
+# Arianna's Arduino Libraries
+AFMotor/
+Adafruit_Circuit_Playground/
+Adafruit_LSM303DLHC/
+Adafruit_Motor_Shield_V2_Library/
+Adafruit_Sensor/
+Adafruit_TCS34725/
+Bridge/
+CapacitiveSensor/
+MOVI/
+OSC/
+SD/
+SparkFun_LIS3DH_Arduino_Library/
+arduino_80181/
+dual-max14870-motor-shield/
+nRF24L01/
+
