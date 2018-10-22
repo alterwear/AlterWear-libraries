@@ -697,18 +697,18 @@ void EPD_Class::line(uint16_t line, const uint8_t *data, uint8_t fixed_value, bo
 		// w/ even_pixels called on top, and odd_pixels called below the loop,
 		// the images are flipped
 		//if odd_pixels is called first, the image is normal
-		/*
+
+		// note, cutting out the "break" statements makes a super insane plaid experience.
 		switch(effect){
 			case ALTERWEAR_FLIP:
 				this->even_pixels(data, fixed_value, read_progmem, stage);
-		}
-		*/
-		if (effect == ALTERWEAR_FLIP) {
-			this->even_pixels(data, fixed_value, read_progmem, stage);
-		//} else if (effect == ALTERWEAR_HALF_FLIP) {
-		//	this->even_pixels(data, fixed_value, read_progmem, stage);
-		} else {
-			this->odd_pixels(data, fixed_value, read_progmem, stage);
+				break;
+			case ALTERWEAR_HALF_FLIP:
+				this->even_pixels(data, fixed_value, read_progmem, stage);
+				break;
+			case ALTERWEAR_DEFAULT:
+				this->odd_pixels(data, fixed_value, read_progmem, stage);
+				break;
 		}
 		
 
@@ -725,12 +725,16 @@ void EPD_Class::line(uint16_t line, const uint8_t *data, uint8_t fixed_value, bo
 		// nothing happens.
 		// if the call to one happens above, and the call to the other happens below,
 		// everything is fine.
-		if (effect == ALTERWEAR_FLIP) {
-			this->odd_pixels(data, fixed_value, read_progmem, stage);
-		//} else if (effect == ALTERWEAR_HALF_FLIP) {
-		//	this->odd_pixels(data, fixed_value, read_progmem, stage);
-		} else {
-			this->even_pixels(data, fixed_value, read_progmem, stage);
+		switch(effect){
+			case ALTERWEAR_FLIP:
+				this->odd_pixels(data, fixed_value, read_progmem, stage);
+				break;
+			case ALTERWEAR_HALF_FLIP:
+				this->odd_pixels(data, fixed_value, read_progmem, stage);
+				break;
+			case ALTERWEAR_DEFAULT:
+				this->even_pixels(data, fixed_value, read_progmem, stage);
+				break;
 		}
 
 	} else {
