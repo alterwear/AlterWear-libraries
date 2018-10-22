@@ -126,7 +126,9 @@ EPD_Class EPD(EPD_SIZE,
 	      Pin_BUSY,
 	      Pin_EPD_CS);
 
-void setupPins(){
+
+// I/O setup
+void setup() {
 	pinMode(Pin_RED_LED, OUTPUT);
 	pinMode(Pin_SW2, INPUT);
 	pinMode(Pin_TEMPERATURE, INPUT);
@@ -140,9 +142,7 @@ void setupPins(){
 	pinMode(Pin_BORDER, OUTPUT);
 	pinMode(Pin_EPD_CS, OUTPUT);
 	pinMode(Pin_EPD_FLASH_CS, OUTPUT);
-}
 
-void initializePins(){
 	digitalWrite(Pin_RED_LED, LOW);
 #if EPD_PWM_REQUIRED
 	digitalWrite(Pin_PWM, LOW);
@@ -153,9 +153,7 @@ void initializePins(){
 	digitalWrite(Pin_BORDER, LOW);
 	digitalWrite(Pin_EPD_CS, LOW);
 	digitalWrite(Pin_EPD_FLASH_CS, HIGH);
-}
 
-void initializeSerial() {
 	Serial.begin(9600);
 	delay(500);
 
@@ -168,9 +166,7 @@ void initializeSerial() {
 		delay(500);  // as the serial monitor is opened before
 	}                    // upload
 #endif
-}
 
-void printEPDInfo(){
 	Serial.println();
 	Serial.println();
 	Serial.println("Demo version: " DEMO_VERSION);
@@ -182,9 +178,7 @@ void printEPDInfo(){
 	Serial.println("Image 1: " IMAGE_1_FILE);
 	Serial.println("Image 2: " IMAGE_2_FILE);
 	Serial.println();
-}
 
-void initializeEPD(){
 	EPD_FLASH.begin(Pin_EPD_FLASH_CS);
 	if (EPD_FLASH.available()) {
 		Serial.println("EPD FLASH chip detected OK");
@@ -198,17 +192,13 @@ void initializeEPD(){
 		Serial.print(device, HEX);
 		Serial.println();
 	}
+
 	// configure temperature sensor
 	S5813A.begin(Pin_TEMPERATURE);
 }
-// I/O setup
-void setup() {
-	setupPins();
-	initializePins();
-	initializeSerial();
-	printEPDInfo();
-	initializeEPD();	
-}
+
+
+static int state = 0;
 
 int getTemperature() {
 	int temperature = S5813A.read();
