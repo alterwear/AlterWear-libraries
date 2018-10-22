@@ -199,7 +199,7 @@ public:
 	    }
 
 		// this->frame_fixed_repeat(0xff, EPD_compensate); // all black
-		this->frame_data_repeat(image, EPD_normal, ALTERWEAR_IDK, turn_on, size);
+		this->frame_data_repeat(image, EPD_normal, ALTERWEAR_VERTICAL_LINES, turn_on, size);
 	}
 
 	void image_test(PROGMEM const uint8_t *image, uint8_t size) {
