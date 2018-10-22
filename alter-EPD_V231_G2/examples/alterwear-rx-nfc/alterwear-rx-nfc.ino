@@ -113,6 +113,10 @@ PROGMEM const
 #define LED_ON  HIGH
 #define LED_OFF LOW
 
+//EEPROM
+int eeprom_addr = 0;
+int current_state = 0;
+
 
 // define the E-Ink display
 EPD_Class EPD(EPD_SIZE,
@@ -210,6 +214,8 @@ void setup() {
 	initializeSerial();
 	printEPDInfo();
 	initializeEPD();	
+
+	EEPROM.write(eeprom_addr, current_state);
 }
 
 int getTemperature() {
@@ -265,6 +271,9 @@ void loop() {
 
 	EPD.end();   // power down the EPD panel
 
+	current_state = EEPROM.read(eeprom_addr);
+	Serial.print("current_state, arduino: ");
+	Serial.print(current_state);
 	
 	
 }

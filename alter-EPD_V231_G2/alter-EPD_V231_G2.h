@@ -242,7 +242,8 @@ public:
 	void image_eeprom() {
 		Serial.print("alter-epd-v231-g2, image_eeprom");
 		byte value = EEPROM.read(0);
-		Serial.print("mem value: ");
+		Serial.print("eeprom value inside .h: ");
+		Serial.println(value);
 		
 	}
 

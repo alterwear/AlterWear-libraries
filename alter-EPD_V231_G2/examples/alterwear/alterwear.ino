@@ -111,8 +111,7 @@ PROGMEM const
 // LED anode through resistor to I/O pin
 // LED cathode to Ground
 #define LED_ON  HIGH
-#define LED_OFF LOW
-
+#define LED_OFF LOW 
 
 // define the E-Ink display
 EPD_Class EPD(EPD_SIZE,
@@ -262,7 +261,5 @@ void loop() {
 	flashLED(50); // keep next image up for a bit.
 
 	EPD.end();   // power down the EPD panel
-
-	
 	
 }
