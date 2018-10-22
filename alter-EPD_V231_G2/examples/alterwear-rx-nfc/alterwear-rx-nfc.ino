@@ -42,6 +42,9 @@
 #include <Energia.h>
 #else
 #include <Arduino.h>
+#include <EEPROM.h>
+//i2c library
+#include <Wire.h>
 #endif
 
 #include <inttypes.h>
@@ -117,6 +120,11 @@ PROGMEM const
 int eeprom_addr = 0;
 int current_state = 13;
 
+//i2c
+#define SLAVE_ADDR 0x55
+#define int_reg_addr 0x01      //first block of user memory
+byte rxDataOne[17];
+byte rxDataTwo[17];
 
 // define the E-Ink display
 EPD_Class EPD(EPD_SIZE,
@@ -207,6 +215,12 @@ void initializeEPD(){
 }
 
 
+// from comment #4: https://forum.arduino.cc/index.php?topic=241663.0
+unsigned long convertFromHex(int ascii){ 
+ if(ascii > 0x39) ascii -= 7; // adjust for hex letters upper or lower case
+ return(ascii & 0xf);
+}
+
 // I/O setup
 void setup() {
 	setupPins();
@@ -254,8 +268,39 @@ void flashLED(int delay_count) {
 	}
 }
 
+void initializeNFCTransmission(){
+	Wire.beginTransmission(byte(SLAVE_ADDR));
+  	Wire.write(int_reg_addr);
+  	Wire.endTransmission();
+  	Wire.requestFrom(byte(SLAVE_ADDR),16);
+}
+
+void readFromNFC(){
+	if (Wire.available()){
+		Serial.println("Wire Available, reading now...");
+
+		// Notes from Christie:
+		// you always have to read data in chunks of 16 or it'll fail, 
+		// the first 9 bytes are ntag metadata,
+		for (int i = 1; i <= 16; i++) {
+		rxDataOne[i] = Wire.read();
+		//if (i >= 10) {
+			Serial.print("rxDataOne i: ");
+			Serial.print(i);
+			Serial.print(", byte: ");
+			Serial.print(rxDataOne[i]);
+			Serial.print(", converted: ");
+			long converted = convertFromHex(rxDataOne[i]);
+			Serial.println(converted);
+		//}
+		}
+	}
+}
 // main loop
 void loop() {
+
+	initializeNFCTransmission();
+	readFromNFC();
 	
 	int temperature = getTemperature();
 
