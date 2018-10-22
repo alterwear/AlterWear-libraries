@@ -125,6 +125,7 @@ int current_state = 13;
 #define int_reg_addr 0x01      //first block of user memory
 byte rxDataOne[17];
 byte rxDataTwo[17];
+byte converted[17];
 
 // define the E-Ink display
 EPD_Class EPD(EPD_SIZE,
@@ -279,21 +280,24 @@ void readFromNFC(){
 	if (Wire.available()){
 		Serial.println("Wire Available, reading now...");
 
-		// Notes from Christie:
 		// you always have to read data in chunks of 16 or it'll fail, 
 		// the first 9 bytes are ntag metadata,
 		for (int i = 1; i <= 16; i++) {
-		rxDataOne[i] = Wire.read();
-		//if (i >= 10) {
-			Serial.print("rxDataOne i: ");
-			Serial.print(i);
-			Serial.print(", byte: ");
-			Serial.print(rxDataOne[i]);
-			Serial.print(", converted: ");
-			long converted = convertFromHex(rxDataOne[i]);
-			Serial.println(converted);
-		//}
+			rxDataOne[i] = Wire.read();
 		}
+	}
+}
+
+void convert() {
+	for (int i = 1; i <= 16; i++) {
+		converted[i] = convertFromHex(rxDataOne[i]);
+		Serial.print("rxDataOne i: ");
+		Serial.print(i);
+		Serial.print(", byte: ");
+		Serial.print(rxDataOne[i]);
+		Serial.print(", converted: ");
+		long converted = convertFromHex(rxDataOne[i]);
+		Serial.println(converted);
 	}
 }
 // main loop
