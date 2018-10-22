@@ -202,16 +202,8 @@ public:
 		this->frame_data_repeat(image, EPD_normal, ALTERWEAR_VERTICAL_LINES, turn_on, size);
 	}
 
-	void image_test(PROGMEM const uint8_t *image, uint8_t size) {
-		Serial.print("alter-epd-v231-g2, image_test");
-		this->frame_fixed_repeat(0xaa, EPD_compensate);
-		//this->frame_fixed_repeat(0xaa, EPD_white);
-		//this->frame_data_repeat(image, EPD_inverse);
-		//this->frame_data_repeat(image, EPD_normal, ALTERWEAR_VERTICAL_LINES, turn_on, size);
-	}
-
 	void image_subset(PROGMEM const uint8_t *image, uint8_t size) {
-		Serial.print("alter-epd-v231-g2, image_arianna");
+		Serial.print("alter-epd-v231-g2, image_subset");
 		//this->frame_fixed_repeat(0xaa, EPD_compensate);
 
 		//creating array of index of lines
@@ -229,6 +221,10 @@ public:
 
 		// this->frame_fixed_repeat(0xff, EPD_compensate); // all black
 		this->frame_data_repeat(image, EPD_normal, ALTERWEAR_SUBSET, turn_on, size);
+	}
+
+	void image_interlace(PROGMEM const uint8_t *image0, PROGMEM const uint8_t *image1) {
+
 	}
 
 #if defined(EPD_ENABLE_EXTRA_SRAM)
