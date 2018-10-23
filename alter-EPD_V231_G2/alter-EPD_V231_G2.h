@@ -239,8 +239,13 @@ public:
 		this->frame_data_repeat(image, EPD_normal, ALTERWEAR_HALF_FLIP);
 	}
 
-	void image_eeprom() {
+	void image_eeprom(PROGMEM const uint8_t *image) {
+		Serial.print("alter-epd-v231-g2, image_eeprom");
 		byte value = EEPROM.read(0);
+		Serial.print("eeprom value inside .h: ");
+		Serial.println(value);
+
+		this->frame_data_repeat(image, EPD_normal, ALTERWEAR_DEFAULT);
 	}
 
 #if defined(EPD_ENABLE_EXTRA_SRAM)

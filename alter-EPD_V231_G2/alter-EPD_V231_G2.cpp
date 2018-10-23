@@ -434,13 +434,6 @@ void EPD_Class::frame_data(PROGMEM const uint8_t *image, EPD_stage stage, ALTERW
 		for (int index = 0; index < size; ++index) {
 			this->line(turn_on[index], &image[turn_on[index] * this->bytes_per_line], 0, true, stage);
 		}
-		/*
-		for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
-			if (turn_on[line] > 0) {
-				this->line(line, &image[line * this->bytes_per_line], 0, true, stage);
-			}
-		}
-		*/
 		break;
 	case ALTERWEAR_VERTICAL_LINES:
 		for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
@@ -455,40 +448,7 @@ void EPD_Class::frame_data(PROGMEM const uint8_t *image, EPD_stage stage, ALTERW
 			this->line(line, &image[line * this->bytes_per_line], 0, true, stage);
 		}
 	}
-	
-			/*
-			for (int index = 0; index < size; index++) {
-				if (turn_on[index] > 0) {
-					// line definition:
-					//void EPD_Class::line(uint16_t line, const uint8_t *data, uint8_t fixed_value, bool read_progmem, EPD_stage stage, bool flip=false) {
-					
-					// passing in turn_on[index] results in a random series of bits flipped on.
-					// They look like a sub-set of the image, but they aren't.
-					// The lines extend across the long way of the 2.0 eink display.
-					//this->line(turn_on[index], &image[index * this->bytes_per_line], 0, true, stage);
-
-					// passing line but using index as the index results in vertical stripes
-					//this->line(line, &image[index * this->bytes_per_line], 0, true, stage);
-
-					
-				}
-
-			}
-			*/
 }
-
-
-/*
-void EPD_Class::frame_data(PROGMEM const uint8_t *image, EPD_stage stage, bool flip=false, arr[] turn_on){
-	for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
-		if (turn_on== 1){
-			this->line(line, &image[line * this->bytes_per_line], 0, true, stage, flip);
-		} else {
-			//blank
-		}
-	}
-}
-*/
 
 
 #if defined(EPD_ENABLE_EXTRA_SRAM)
@@ -585,6 +545,9 @@ void EPD_Class::even_pixels(const uint8_t *data, uint8_t fixed_value, bool read_
 			uint8_t pixels;
 			if (read_progmem) {
 				pixels = pgm_read_byte_near(data + b) & 0xaa;
+				byte value = EEPROM.read(0);
+				Serial.print("eeprom value inside .cpp: ");
+				Serial.println(value);
 			} else {
 				pixels = data[b] & 0xaa;
 			}
