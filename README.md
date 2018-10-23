@@ -33,8 +33,8 @@ git remote add origin https://github.com/molecule/AlterWear-libraries.git
 git pull origin master --allow-unrelated-histories
 git log
 ```
-9) Now it's time to edit the .gitignore file. We only care about logging the library files we are editing, but we don't care about all of the other Arduino libraries you have stored in your libraries folder. So, we need to tell git to ignore all of these other libraries. Open the .gitignore file (which is stored in your libraries folder) and copy and paste all of the names of your libraries at the bottom of the .git ignore file, with one library name per line. You can either do it within terminal using vim, or you can open up the file through Finder (.gitignore is usually hidden, but if you press Command + Shift + . then it'll appear in Finder). You can find all these names easily by typing the command "git status" into terminal and git will list out all of the names for you. 
-11) 
+6) Now it's time to edit the .gitignore file. We only care about logging the library files we are editing, but we don't care about all of the other Arduino libraries you have stored in your libraries folder. So, we need to tell git to ignore all of these other libraries. Open the .gitignore file (which is stored in your libraries folder) and copy and paste all of the names of your libraries at the bottom of the .git ignore file, with one library name per line. You can either do it within terminal using vim, or you can open up the file through Finder (.gitignore is usually hidden, but if you press Command + Shift + . then it'll appear in Finder). You can find all these names easily by typing the command "git status" into terminal and git will list out all of the names for you. 
+7) Then type these last commands into terminal:
 ``` 
 git add .
 git commit -m "updated .gitignore with more Arduino libraries"
