@@ -93,6 +93,8 @@ typedef enum {
 	ALTERWEAR_IDK,
 	ALTERWEAR_SUBSET,
 	ALTERWEAR_INTERLACE,
+	ALTERWEAR_EVEN_ONLY,
+	ALTERWEAR_EEPROM,
 } ALTERWEAR_EFFECT;
 
 typedef void EPD_reader(void *buffer, uint32_t address, uint16_t length);
@@ -239,13 +241,13 @@ public:
 		this->frame_data_repeat(image, EPD_normal, ALTERWEAR_HALF_FLIP);
 	}
 
-	void image_eeprom(PROGMEM const uint8_t *image) {
+	void image_eeprom(const uint8_t *image) {
 		Serial.print("alter-epd-v231-g2, image_eeprom");
 		byte value = EEPROM.read(0);
 		Serial.print("eeprom value inside .h: ");
 		Serial.println(value);
 
-		this->frame_data_repeat(image, EPD_normal, ALTERWEAR_DEFAULT);
+		this->frame_data_repeat(image, EPD_normal, ALTERWEAR_EEPROM);
 	}
 
 #if defined(EPD_ENABLE_EXTRA_SRAM)
@@ -282,7 +284,7 @@ public:
 	int temperature_to_factor_10x(int temperature) const;
 
 	// called by line()
-	void even_pixels(const uint8_t *data, uint8_t fixed_value, bool read_progmem, EPD_stage stage);
+	void even_pixels(const uint8_t *data, uint8_t fixed_value, bool read_progmem, EPD_stage stage, ALTERWEAR_EFFECT effect=ALTERWEAR_DEFAULT);
 	void odd_pixels(const uint8_t *data, uint8_t fixed_value, bool read_progmem, EPD_stage stage);
 	void all_pixels(const uint8_t *data, uint8_t fixed_value, bool read_progmem, EPD_stage stage);
 

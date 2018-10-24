@@ -414,6 +414,10 @@ void EPD_Class::frame_data(PROGMEM const uint8_t *image, EPD_stage stage, ALTERW
 			this->line(line, &image[line * this->bytes_per_line], 0, true, stage, effect);
 		}
 		break;
+	case ALTERWEAR_EVEN_ONLY:
+		for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
+			this->line(line, &image[line * this->bytes_per_line], 0, true, stage, effect);
+		}
 	case ALTERWEAR_IDK:
 		for (int index = 0; index < size; index++) {
 			if (turn_on[index] > 0) {
@@ -443,6 +447,10 @@ void EPD_Class::frame_data(PROGMEM const uint8_t *image, EPD_stage stage, ALTERW
 			}
 		}
 		break;
+	case ALTERWEAR_EEPROM: // same as DEFAULT, just pass the effect flag through
+		for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
+			this->line(line, &image[line * this->bytes_per_line], 0, true, stage, effect);
+		}
 	case ALTERWEAR_DEFAULT:
 		for (uint8_t line = 0; line < this->lines_per_display ; ++line) {
 			this->line(line, &image[line * this->bytes_per_line], 0, true, stage);
@@ -535,7 +543,7 @@ void EPD_Class::frame_cb_repeat(uint32_t address, EPD_reader *reader, EPD_stage 
 
 
 // pixels on display are numbered from 1 so even is actually bits 1,3,5,...
-void EPD_Class::even_pixels(const uint8_t *data, uint8_t fixed_value, bool read_progmem, EPD_stage stage) {
+void EPD_Class::even_pixels(const uint8_t *data, uint8_t fixed_value, bool read_progmem, EPD_stage stage, ALTERWEAR_EFFECT effect=ALTERWEAR_DEFAULT) {
 	for (uint16_t b = 0; b < this->bytes_per_line; ++b) {
 		if (0 != data) {
 #if !defined(__AVR__)
@@ -543,11 +551,19 @@ void EPD_Class::even_pixels(const uint8_t *data, uint8_t fixed_value, bool read_
 #else
 			// AVR has multiple memory spaces
 			uint8_t pixels;
-			if (read_progmem) {
-				pixels = pgm_read_byte_near(data + b) & 0xaa;
-				byte value = EEPROM.read(0);
+			if (effect==ALTERWEAR_EEPROM) {
+				pixels = EEPROM.read(data+b) & 0xaa;
+				byte value = EEPROM.read(data+b);
+				//Serial.print("'data' value inside .cpp: ");
+				//Serial.println(*data);
 				Serial.print("eeprom value inside .cpp: ");
 				Serial.println(value);
+			} else if (read_progmem) {
+				pixels = pgm_read_byte_near(data + b) & 0xaa;
+				Serial.print("address: ");
+				Serial.print( char(data+b) );
+				Serial.print(", pixels: ");
+				Serial.println(pixels);
 			} else {
 				pixels = data[b] & 0xaa;
 			}
@@ -680,8 +696,7 @@ void EPD_Class::border_dummy_line() {
 
 
 // output one line of scan and data bytes to the display
-void EPD_Class::line(uint16_t line, const uint8_t *data, uint8_t fixed_value, bool read_progmem, EPD_stage stage, ALTERWEAR_EFFECT effect=ALTERWEAR_DEFAULT) {
-
+void EPD_Class::line(uint16_t line, const uint8_t *data, uint8_t fixed_value, bool read_progmem, EPD_stage stage, ALTERWEAR_EFFECT effect=ALTERWEAR_DEFAULT){
 	//Serial.print("alter-version, line... ");
 	SPI_on();
 
@@ -712,6 +727,12 @@ void EPD_Class::line(uint16_t line, const uint8_t *data, uint8_t fixed_value, bo
 			case ALTERWEAR_HALF_FLIP:
 				this->odd_pixels(data, fixed_value, read_progmem, stage);
 				break;
+			case ALTERWEAR_EVEN_ONLY:
+				// only call even pixels
+				break;
+			case ALTERWEAR_EEPROM:
+				// only call even pixels for now
+				break;
 			case ALTERWEAR_DEFAULT:
 				this->odd_pixels(data, fixed_value, read_progmem, stage);
 				break;
@@ -737,6 +758,12 @@ void EPD_Class::line(uint16_t line, const uint8_t *data, uint8_t fixed_value, bo
 				break;
 			case ALTERWEAR_HALF_FLIP:
 				this->odd_pixels(data, fixed_value, read_progmem, stage);
+				break;
+			case ALTERWEAR_EVEN_ONLY:
+				this->even_pixels(data, fixed_value, read_progmem, stage);
+				break;
+			case ALTERWEAR_EEPROM:
+				this->even_pixels(data, fixed_value, read_progmem, stage, effect);
 				break;
 			case ALTERWEAR_DEFAULT:
 				this->even_pixels(data, fixed_value, read_progmem, stage);

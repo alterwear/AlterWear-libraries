@@ -71,7 +71,7 @@
 // no futher changed below this point
 
 // current version number
-#define DEMO_VERSION "alterwear"
+#define DEMO_VERSION "alterwear-rx-nfc"
 
 
 // pre-processor convert to string
@@ -230,7 +230,40 @@ void setup() {
 	printEPDInfo();
 	initializeEPD();	
 
-	EEPROM.write(eeprom_addr, current_state);
+	for (uint8_t addr = 0; addr < 30; addr++) {
+		EEPROM.write(addr, current_state+addr);
+	}
+	
+	Serial.println("trying to see the image bits....");
+
+	Serial.print("image_1_bits DEC: ");
+	Serial.println((byte)IMAGE_1_BITS);
+	Serial.print("image_1_bits HEX: ");
+	Serial.println((byte)IMAGE_1_BITS, HEX);
+	Serial.print("image_1_bits BIN: ");
+	Serial.println((byte)IMAGE_1_BITS, BIN);
+	Serial.print("image_1_file: ");
+	Serial.println(IMAGE_1_FILE);              // idea: try this from the EPD lib code.
+
+	uint8_t pixels;
+	// this->bytes_per_line is 200/8 = 25 for 2_0
+	for (uint16_t b = 0; b < 25; ++b) {
+		//pixels = pgm_read_byte_near(IMAGE_1_BITS + b) & 0xaa;
+		pixels = pgm_read_byte_near(IMAGE_1_BITS + b);
+		Serial.print("pixels: ");
+		Serial.println(pixels);
+	}
+	for (int i = 0; i < 100; i++) {
+		Serial.print("0x");
+		Serial.print(IMAGE_1_BITS[i], HEX);
+		Serial.print(", ");
+		if (i%12 == 0) {
+			Serial.println();
+		}
+	}
+
+
+	Serial.println("set up complete");
 }
 
 int getTemperature() {
@@ -303,8 +336,8 @@ void convert() {
 // main loop
 void loop() {
 
-	initializeNFCTransmission();
-	readFromNFC();
+	//initializeNFCTransmission();
+	//readFromNFC();
 	
 	int temperature = getTemperature();
 
@@ -315,14 +348,15 @@ void loop() {
 	EPD.clear(); // always clear screen at the beginning.
 	flashLED(5); // reduce delay so first image comes up quickly
 
-	EPD.image_eeprom(IMAGE_2_BITS);
+	EPD.image_eeprom(eeprom_addr);
+	//EPD.image_0(IMAGE_1_BITS);
 	flashLED(50); // keep next image up for a bit.
 
 	EPD.end();   // power down the EPD panel
 
-	current_state = EEPROM.read(eeprom_addr);
-	Serial.print("current_state, arduino: ");
-	Serial.print(current_state);
-	
-	
+	for (uint8_t addr = 0; addr < EEPROM.length(); addr++) {
+		current_state = EEPROM.read(addr);
+		Serial.print("current_state, arduino: ");
+		Serial.print(current_state);
+	}	
 }
