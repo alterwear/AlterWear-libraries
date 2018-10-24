@@ -551,19 +551,23 @@ void EPD_Class::even_pixels(const uint8_t *data, uint8_t fixed_value, bool read_
 #else
 			// AVR has multiple memory spaces
 			uint8_t pixels;
+
 			if (effect==ALTERWEAR_EEPROM) {
 				pixels = EEPROM.read(data+b) & 0xaa;
-				byte value = EEPROM.read(data+b);
+				//byte value = EEPROM.read(data+b);
 				//Serial.print("'data' value inside .cpp: ");
 				//Serial.println(*data);
-				Serial.print("eeprom value inside .cpp: ");
-				Serial.println(value);
-			} else if (read_progmem) {
+				//Serial.print("eeprom value inside .cpp: ");
+				//Serial.println(value);
+				read_progmem=false;
+			} 
+			
+			if (read_progmem) {
 				pixels = pgm_read_byte_near(data + b) & 0xaa;
-				Serial.print("address: ");
-				Serial.print( char(data+b) );
-				Serial.print(", pixels: ");
-				Serial.println(pixels);
+				//Serial.print("address: ");
+				//Serial.print( char(data+b) );
+				//Serial.print(", pixels: ");
+				//Serial.println(pixels);
 			} else {
 				pixels = data[b] & 0xaa;
 			}
@@ -732,6 +736,7 @@ void EPD_Class::line(uint16_t line, const uint8_t *data, uint8_t fixed_value, bo
 				break;
 			case ALTERWEAR_EEPROM:
 				// only call even pixels for now
+				this->odd_pixels(data, fixed_value, read_progmem, stage);
 				break;
 			case ALTERWEAR_DEFAULT:
 				this->odd_pixels(data, fixed_value, read_progmem, stage);

@@ -230,10 +230,18 @@ void setup() {
 	printEPDInfo();
 	initializeEPD();	
 
-	for (uint8_t addr = 0; addr < 30; addr++) {
+	float start = millis();
+	int x = 300;
+	for (uint8_t addr = 0; addr < x; addr++) {
 		EEPROM.write(addr, current_state+addr);
 	}
+	float stop = millis();
+	Serial.print("time to write ");
+	Serial.print(x);
+	Serial.print(" bytes: ");
+	Serial.println(stop-start);
 	
+	/*
 	Serial.println("trying to see the image bits....");
 
 	Serial.print("image_1_bits DEC: ");
@@ -244,7 +252,9 @@ void setup() {
 	Serial.println((byte)IMAGE_1_BITS, BIN);
 	Serial.print("image_1_file: ");
 	Serial.println(IMAGE_1_FILE);              // idea: try this from the EPD lib code.
+	*/
 
+/*
 	uint8_t pixels;
 	// this->bytes_per_line is 200/8 = 25 for 2_0
 	for (uint16_t b = 0; b < 25; ++b) {
@@ -261,6 +271,7 @@ void setup() {
 			Serial.println();
 		}
 	}
+	*/
 
 
 	Serial.println("set up complete");
@@ -348,15 +359,24 @@ void loop() {
 	EPD.clear(); // always clear screen at the beginning.
 	flashLED(5); // reduce delay so first image comes up quickly
 
+	// offset:
 	EPD.image_eeprom(eeprom_addr);
+	// not offset
+	//EPD.image_eeprom(IMAGE_1_BITS);
+	// not offset:
 	//EPD.image_0(IMAGE_1_BITS);
 	flashLED(50); // keep next image up for a bit.
 
 	EPD.end();   // power down the EPD panel
 
-	for (uint8_t addr = 0; addr < EEPROM.length(); addr++) {
+	for (uint16_t addr = 0; addr < IMAGE_1_BITS; addr++) {
+		byte val = pgm_read_byte_near(addr);
+		Serial.print("pgm: ");
+		Serial.println(val);
+		/*
 		current_state = EEPROM.read(addr);
 		Serial.print("current_state, arduino: ");
 		Serial.print(current_state);
+		*/
 	}	
 }
