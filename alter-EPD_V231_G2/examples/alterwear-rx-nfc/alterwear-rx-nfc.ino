@@ -230,6 +230,7 @@ void setup() {
 	printEPDInfo();
 	initializeEPD();	
 
+/*
 	float start = millis();
 	int x = 300;
 	for (uint8_t addr = 0; addr < x; addr++) {
@@ -240,6 +241,7 @@ void setup() {
 	Serial.print(x);
 	Serial.print(" bytes: ");
 	Serial.println(stop-start);
+	*/
 	
 	/*
 	Serial.println("trying to see the image bits....");
@@ -359,8 +361,21 @@ void loop() {
 	EPD.clear(); // always clear screen at the beginning.
 	flashLED(5); // reduce delay so first image comes up quickly
 
+	// currently running
+	float start = millis();
+	Serial.print("Time to run ");
+	EPD.image_subset(IMAGE_2_BITS, 5);
+	float stop = millis();
+	Serial.print(", took: ");
+	Serial.print(stop-start);
+	Serial.print(" ms");
+	// No good: Video #1, 4, 8 (interlace failed), 10 (smear)
+	// Good, video: 2, 3, 5, 6 (lines), 7 (subset), 9 (half flip), 11 (smear, 2nd loop is better)
+
+	//Time to run alter-epd-v231-g2, image_fast, took: 997.00 ms
+
 	// offset:
-	EPD.image_eeprom(eeprom_addr);
+	//EPD.image_eeprom(eeprom_addr);
 	// not offset
 	//EPD.image_eeprom(IMAGE_1_BITS);
 	// not offset:
@@ -368,15 +383,18 @@ void loop() {
 	flashLED(50); // keep next image up for a bit.
 
 	EPD.end();   // power down the EPD panel
+	flashLED(100);
+	/*
 
 	for (uint16_t addr = 0; addr < IMAGE_1_BITS; addr++) {
 		byte val = pgm_read_byte_near(addr);
 		Serial.print("pgm: ");
 		Serial.println(val);
-		/*
-		current_state = EEPROM.read(addr);
-		Serial.print("current_state, arduino: ");
-		Serial.print(current_state);
-		*/
+
+		//current_state = EEPROM.read(addr);
+		//Serial.print("current_state, arduino: ");
+		//Serial.print(current_state);
+		
 	}	
+	*/
 }
