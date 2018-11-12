@@ -227,6 +227,7 @@ void setup() {
 	setupPins();
 	initializePins();
 	initializeSerial();
+	Wire.begin();                         // join i2c bus 
 	printEPDInfo();
 	initializeEPD();	
 
@@ -323,48 +324,70 @@ void initializeNFCTransmission(){
 }
 
 void readFromNFC(){
+	Serial.println(Wire.available());
 	if (Wire.available()){
 		Serial.println("Wire Available, reading now...");
 
 		// you always have to read data in chunks of 16 or it'll fail, 
 		// the first 9 bytes are ntag metadata,
-		for (int i = 1; i <= 16; i++) {
-			rxDataOne[i] = Wire.read();
+		for (int i = 0; i < 16; i++) {
+			//rxDataOne[i] = Wire.read();
+			//EEPROM.write(eeprom_addr, current_state);
+			byte temp = Wire.read();
+			if (i > 8){
+				Serial.println(temp);
+				EEPROM.write(eeprom_addr+i, temp);
+				rxDataOne[i] = temp;
+			}
 		}
 	}
 }
 
 void convert() {
-	for (int i = 1; i <= 16; i++) {
-		converted[i] = convertFromHex(rxDataOne[i]);
-		Serial.print("rxDataOne i: ");
-		Serial.print(i);
-		Serial.print(", byte: ");
-		Serial.print(rxDataOne[i]);
-		Serial.print(", converted: ");
-		long converted = convertFromHex(rxDataOne[i]);
-		Serial.println(converted);
+	for (int i = 0; i < 16; i++) {
+		if (i > 8) {
+			converted[i] = convertFromHex(rxDataOne[i]);
+			Serial.print("rxDataOne i: ");
+			Serial.print(i);
+			Serial.print(", byte: ");
+			Serial.print(rxDataOne[i]);
+			Serial.print(", converted: ");
+			long converted = convertFromHex(rxDataOne[i]);
+			Serial.println(converted);
+		}
+	}
+}
+
+void sanityCheckEeprom() {
+	Serial.println("sanity checking eeprom contents...");
+	for (int i = 0; i < 16; i++) {
+		if (i > 8) {
+			//rxDataOne[i] = Wire.read();
+			//EEPROM.write(eeprom_addr, current_state);
+			byte cetl = EEPROM.read(eeprom_addr+i);
+			Serial.println(cetl);
+		}
 	}
 }
 // main loop
 void loop() {
 
-	//initializeNFCTransmission();
-	//readFromNFC();
+	initializeNFCTransmission();
+	readFromNFC();
+	convert();
+	sanityCheckEeprom();
 	
+	// eink logistics
 	int temperature = getTemperature();
-
 	checkEPD();
-
 	EPD.setFactor(temperature); // adjust for current temperature
-
 	EPD.clear(); // always clear screen at the beginning.
 	flashLED(5); // reduce delay so first image comes up quickly
 
 	// currently running
 	float start = millis();
 	Serial.print("Time to run ");
-	EPD.image_subset(IMAGE_2_BITS, 5);
+	EPD.image_eeprom(IMAGE_2_BITS);
 	float stop = millis();
 	Serial.print(", took: ");
 	Serial.print(stop-start);

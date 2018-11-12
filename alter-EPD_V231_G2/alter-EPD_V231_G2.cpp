@@ -544,7 +544,7 @@ void EPD_Class::frame_cb_repeat(uint32_t address, EPD_reader *reader, EPD_stage 
 
 // pixels on display are numbered from 1 so even is actually bits 1,3,5,...
 void EPD_Class::even_pixels(const uint8_t *data, uint8_t fixed_value, bool read_progmem, EPD_stage stage, ALTERWEAR_EFFECT effect=ALTERWEAR_DEFAULT) {
-	for (uint16_t b = 0; b < this->bytes_per_line; ++b) {
+	for (uint8_t b = 0; b < this->bytes_per_line; b++) { // bytes_per_line = 16
 		if (0 != data) {
 #if !defined(__AVR__)
 			uint8_t pixels = data[b] & 0xaa;
@@ -553,14 +553,19 @@ void EPD_Class::even_pixels(const uint8_t *data, uint8_t fixed_value, bool read_
 			uint8_t pixels;
 
 			if (effect==ALTERWEAR_EEPROM) {
+				// & 0xaa to turn on only the even pixels to display 
+				// pixels = EEPROM.read(data+b) & 0xaa;
+
+				byte value = EEPROM.read(data+b);
+
 				pixels = EEPROM.read(data+b) & 0xaa;
-				//byte value = EEPROM.read(data+b);
-				//Serial.print("'data' value inside .cpp: ");
-				//Serial.println(*data);
-				//Serial.print("eeprom value inside .cpp: ");
-				//Serial.println(value);
+				Serial.print("'data' val .cpp: ");
+				Serial.println(*(data+b));
+				Serial.print("eeprom val .cpp: ");
+				Serial.println(value);
 				read_progmem=false;
-			} 
+				delay(1000);
+			}
 			
 			if (read_progmem) {
 				pixels = pgm_read_byte_near(data + b) & 0xaa;
