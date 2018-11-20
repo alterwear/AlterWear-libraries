@@ -556,12 +556,13 @@ void EPD_Class::even_pixels(const uint8_t *data, uint8_t fixed_value, bool read_
 				// & 0xaa to turn on only the even pixels to display 
 				// pixels = EEPROM.read(data+b) & 0xaa;
 
-				byte value = EEPROM.read(data+b);
+				byte value = EEPROM.read(*data+b);
 
-				pixels = EEPROM.read(data+b) & 0xaa;
-				Serial.print("'data' val .cpp: ");
-				Serial.println(*(data+b));
-				Serial.print("eeprom val .cpp: ");
+				pixels = EEPROM.read(*data+b) & 0xaa;
+				// Serial.print("'data' val .cpp: ");
+				Serial.print(*data+b);
+				// Serial.print("eeprom val .cpp: ");
+				Serial.print(" , ");
 				Serial.println(value);
 				read_progmem=false;
 				delay(1000);

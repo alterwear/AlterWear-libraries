@@ -335,9 +335,12 @@ void readFromNFC(){
 			//EEPROM.write(eeprom_addr, current_state);
 			byte temp = Wire.read();
 			if (i > 8){
-				Serial.println(temp);
+				Serial.print(temp); // data received
+				Serial.print(" , ");
+				temp = convertFromHex(temp); // convert data to correct value representation
+				Serial.println(convertFromHex(temp));
 				EEPROM.write(eeprom_addr+i, temp);
-				rxDataOne[i] = temp;
+				// rxDataOne[i] = temp;
 			}
 		}
 	}
@@ -374,7 +377,15 @@ void loop() {
 
 	initializeNFCTransmission();
 	readFromNFC();
-	convert();
+
+	// Arianna's Next Steps:
+	// figure out how to transfer more than 16 bytes
+	// maybe some kind of for loop where you do this over and over again: 
+	// {
+	// initializeNFCTransmission();
+	// readFromNFC(address to read from next);
+	// }
+
 	sanityCheckEeprom();
 	
 	// eink logistics
@@ -387,7 +398,7 @@ void loop() {
 	// currently running
 	float start = millis();
 	Serial.print("Time to run ");
-	EPD.image_eeprom(IMAGE_2_BITS);
+	EPD.image_eeprom(eeprom_addr);
 	float stop = millis();
 	Serial.print(", took: ");
 	Serial.print(stop-start);
